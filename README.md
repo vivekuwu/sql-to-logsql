@@ -133,7 +133,7 @@ Known limitations:
 - `CASE/WHEN` is not supported
 - Recursive CTEs, `UNION DISTINCT`, and `INTERSECT`/`EXCEPT` are not supported.
 - Only a curated subset of SQL scalar and window functions is implemented; unsupported functions raise explicit translation errors
-- `RIGHT/OUTER JOIN` is not supported, supported JOINS with the same field name in both sides 
+- `RIGHT/OUTER JOIN` is not supported, supported only JOINS with the same field name in both sides 
 
 ## Working with views
 
