@@ -1,0 +1,149 @@
+import Editor from "@monaco-editor/react";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card.tsx";
+import { Badge } from "@/components/ui/badge.tsx";
+import {useCallback, useEffect, useState} from "react";
+import { Button } from "@/components/ui/button.tsx";
+import {Select, SelectContent, SelectItem, SelectTrigger} from "@/components/ui/select.tsx";
+import {SelectValue} from "@radix-ui/react-select";
+import {DEFAULT_EXAMPLE_ID, EXAMPLES} from "@/components/sql-editor/examples.ts";
+import {COMPLETIONS} from "@/components/sql-editor/complections.ts";
+import {CircleXIcon, CircleCheckBigIcon} from "lucide-react"
+
+export interface SqlEditorProps {
+  readonly onRun?: (sql: string) => void;
+  readonly isLoading?: boolean;
+  readonly error?: string;
+  readonly success?: string;
+}
+
+export function SQLEditor({
+  onRun,
+  isLoading,
+  error,
+  success,
+}: SqlEditorProps) {
+  const [value, setValue] = useState<string>(DEFAULT_EXAMPLE_ID);
+  const [sql, setSql] = useState("");
+
+  const runQuery = useCallback((text?: string) => {
+    if (!onRun || isLoading) {
+      return;
+    }
+    const current = typeof text === "string" ? text : sql;
+    onRun(current);
+  }, [onRun, isLoading, sql]);
+
+  useEffect(() => {
+    const example = EXAMPLES.find((example) => example.id === value);
+    if (example) {
+        setSql(example.sql ?? "");
+    }
+  }, [value]);
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>SQL code</CardTitle>
+        <CardDescription>
+          Virtual tables are configured on the server (default:
+          <Badge variant={"outline"}>logs</Badge>)
+        </CardDescription>
+        <CardAction className={"flex flex-row gap-2"}>
+          <Select onValueChange={setValue} value={value} disabled={isLoading}>
+            <SelectTrigger className={"cursor-pointer"}>
+              <SelectValue placeholder="Select example" />
+            </SelectTrigger>
+            <SelectContent>
+              {EXAMPLES.map((example) => (
+                <SelectItem value={example.id} key={example.id} className={"cursor-pointer"}>
+                    Example: {example.title}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Button
+            disabled={isLoading}
+            className={"cursor-pointer"}
+            onClick={() => runQuery()}
+          >
+            Execute
+          </Button>
+        </CardAction>
+      </CardHeader>
+      <CardContent>
+        <Editor
+          className={
+            isLoading
+              ? "pointer-events-none opacity-50 select-none grayscale-50"
+              : ""
+          }
+          height={200}
+          defaultLanguage="sql"
+          theme="vs-light"
+          value={sql}
+          options={{
+            readOnly: isLoading,
+            minimap: { enabled: false },
+            fontSize: 14,
+            lineNumbers: "off",
+            scrollBeyondLastLine: false,
+            selectionHighlight: !isLoading,
+          }}
+          onChange={(next) => setSql(next ?? "")}
+          onMount={(editorInstance, monaco) => {
+            monaco.languages.registerCompletionItemProvider("sql", {
+              provideCompletionItems: () => {
+                const suggestions = COMPLETIONS.map((label) => ({
+                  label,
+                  kind: monaco.languages.CompletionItemKind.Keyword,
+                  insertText: label,
+                  range: {
+                    startLineNumber: 1,
+                    endLineNumber: 1,
+                    startColumn: 1,
+                    endColumn: 1,
+                  },
+                  detail: "SQL keyword",
+                  documentation: "SQL keyword",
+                  sortText: label,
+                  filterText: label,
+                }));
+                return { suggestions };
+              },
+            });
+
+            const executeFromEditor = () => runQuery(editorInstance.getValue() ?? "");
+            const keybindings = [
+              monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter,
+              monaco.KeyMod.Shift | monaco.KeyCode.Enter,
+              monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.Enter,
+            ];
+            keybindings.forEach((binding) => {
+              editorInstance.addCommand(binding, executeFromEditor);
+            });
+          }}
+        />
+      </CardContent>
+      {error && (
+        <CardFooter className={"flex gap-1"}>
+          <CircleXIcon color={"red"} />
+          <span className={"text-destructive"}>{error}</span>
+        </CardFooter>
+      )}
+      {!error && success && (
+          <CardFooter className={"flex gap-1"}>
+            <CircleCheckBigIcon color={"green"} />
+            <span className={"text-green-700"}>{success}</span>
+          </CardFooter>
+      )}
+    </Card>
+  );
+}

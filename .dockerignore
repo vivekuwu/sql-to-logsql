@@ -1,0 +1,65 @@
+# Logs
+**/logs
+**/*.log
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
+**/pnpm-debug.log*
+**/lerna-debug.log*
+
+**/node_modules
+**/dist
+**/dist-ssr
+**/*.local
+
+# Editor directories and files
+**/.vscode/*
+!**/.vscode/extensions.json
+**/.idea
+**/.DS_Store
+**/*.suo
+**/*.ntvs*
+**/*.njsproj
+**/*.sln
+**/*.sw?
+
+# Default ignored files
+.idea/shelf
+.idea/workspace.xml
+# Editor-based HTTP Client requests
+.idea/httpRequests
+# Datasource local storage ignored files
+.idea/dataSources
+.idea/dataSources.local.xml
+
+# Logs
+cmd/sql-to-logsql/web/ui/**/logs
+cmd/sql-to-logsql/web/ui/**/*.log
+cmd/sql-to-logsql/web/ui/**/npm-debug.log*
+cmd/sql-to-logsql/web/ui/**/yarn-debug.log*
+cmd/sql-to-logsql/web/ui/**/yarn-error.log*
+cmd/sql-to-logsql/web/ui/**/pnpm-debug.log*
+cmd/sql-to-logsql/web/ui/**/lerna-debug.log*
+
+cmd/sql-to-logsql/web/ui/**/node_modules
+cmd/sql-to-logsql/web/ui/**/dist
+cmd/sql-to-logsql/web/ui/**/dist-ssr
+cmd/sql-to-logsql/web/ui/**/*.local
+
+# Editor directories and files
+cmd/sql-to-logsql/web/ui/**/.vscode/*
+!cmd/sql-to-logsql/web/ui/**/.vscode/extensions.json
+cmd/sql-to-logsql/web/ui/**/.idea
+cmd/sql-to-logsql/web/ui/**/.DS_Store
+cmd/sql-to-logsql/web/ui/**/*.suo
+cmd/sql-to-logsql/web/ui/**/*.ntvs*
+cmd/sql-to-logsql/web/ui/**/*.njsproj
+cmd/sql-to-logsql/web/ui/**/*.sln
+cmd/sql-to-logsql/web/ui/**/*.sw?
+
+.git
+vendor
+gocache-for-docker
+.idea
+.zed
+.vscode
