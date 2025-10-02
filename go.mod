@@ -1,3 +1,3 @@
-module github.com/VictoriaMetrics-Community/sql-to-logsql
+module github.com/VictoriaMetrics/sql-to-logsql
 
 go 1.25

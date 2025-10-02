@@ -5,7 +5,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/VictoriaMetrics-Community/sql-to-logsql/lib/sql/token"
+	"github.com/VictoriaMetrics/sql-to-logsql/lib/sql/token"
 )
 
 // Lexer converts raw SQL text into a stream of tokens.

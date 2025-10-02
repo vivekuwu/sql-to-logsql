@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/VictoriaMetrics-Community/sql-to-logsql/lib/sql/ast"
-	"github.com/VictoriaMetrics-Community/sql-to-logsql/lib/store"
+	"github.com/VictoriaMetrics/sql-to-logsql/lib/sql/ast"
+	"github.com/VictoriaMetrics/sql-to-logsql/lib/store"
 )
 
 func ExecuteDropStatement(stmt ast.Statement, sp *store.Provider) (string, error) {

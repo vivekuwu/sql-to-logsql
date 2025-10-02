@@ -1,8 +1,8 @@
 package store
 
 import (
-	"github.com/VictoriaMetrics-Community/sql-to-logsql/lib/store/tablestore"
-	"github.com/VictoriaMetrics-Community/sql-to-logsql/lib/store/viewstore"
+	"github.com/VictoriaMetrics/sql-to-logsql/lib/store/tablestore"
+	"github.com/VictoriaMetrics/sql-to-logsql/lib/store/viewstore"
 )
 
 type Provider struct {

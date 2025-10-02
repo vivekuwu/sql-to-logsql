@@ -8,13 +8,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/VictoriaMetrics-Community/sql-to-logsql/lib/logsql"
-	"github.com/VictoriaMetrics-Community/sql-to-logsql/lib/sql/ast"
-	"github.com/VictoriaMetrics-Community/sql-to-logsql/lib/sql/lexer"
-	sqlparser "github.com/VictoriaMetrics-Community/sql-to-logsql/lib/sql/parser"
-	"github.com/VictoriaMetrics-Community/sql-to-logsql/lib/store"
-	"github.com/VictoriaMetrics-Community/sql-to-logsql/lib/store/tablestore"
-	"github.com/VictoriaMetrics-Community/sql-to-logsql/lib/store/viewstore"
+	"github.com/VictoriaMetrics/sql-to-logsql/lib/logsql"
+	"github.com/VictoriaMetrics/sql-to-logsql/lib/sql/ast"
+	"github.com/VictoriaMetrics/sql-to-logsql/lib/sql/lexer"
+	sqlparser "github.com/VictoriaMetrics/sql-to-logsql/lib/sql/parser"
+	"github.com/VictoriaMetrics/sql-to-logsql/lib/store"
+	"github.com/VictoriaMetrics/sql-to-logsql/lib/store/tablestore"
+	"github.com/VictoriaMetrics/sql-to-logsql/lib/store/viewstore"
 )
 
 func parseStatement(t *testing.T, sql string) ast.Statement {

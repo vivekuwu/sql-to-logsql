@@ -3,7 +3,7 @@ package parser
 import (
 	"fmt"
 
-	"github.com/VictoriaMetrics-Community/sql-to-logsql/lib/sql/token"
+	"github.com/VictoriaMetrics/sql-to-logsql/lib/sql/token"
 )
 
 // SyntaxError describes a parsing failure with source position context.

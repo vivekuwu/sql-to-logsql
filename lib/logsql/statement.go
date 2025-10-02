@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/VictoriaMetrics-Community/sql-to-logsql/lib/sql/ast"
-	"github.com/VictoriaMetrics-Community/sql-to-logsql/lib/store"
+	"github.com/VictoriaMetrics/sql-to-logsql/lib/sql/ast"
+	"github.com/VictoriaMetrics/sql-to-logsql/lib/store"
 )
 
 type StatementType string

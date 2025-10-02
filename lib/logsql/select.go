@@ -8,9 +8,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/VictoriaMetrics-Community/sql-to-logsql/lib/sql/ast"
-	"github.com/VictoriaMetrics-Community/sql-to-logsql/lib/sql/render"
-	"github.com/VictoriaMetrics-Community/sql-to-logsql/lib/store"
+	"github.com/VictoriaMetrics/sql-to-logsql/lib/sql/ast"
+	"github.com/VictoriaMetrics/sql-to-logsql/lib/sql/render"
+	"github.com/VictoriaMetrics/sql-to-logsql/lib/store"
 )
 
 type translationContext struct {

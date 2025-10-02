@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/VictoriaMetrics-Community/sql-to-logsql/lib/logsql"
+	"github.com/VictoriaMetrics/sql-to-logsql/lib/logsql"
 )
 
 type EndpointConfig struct {

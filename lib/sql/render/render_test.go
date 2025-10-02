@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/VictoriaMetrics-Community/sql-to-logsql/lib/sql/ast"
+	"github.com/VictoriaMetrics/sql-to-logsql/lib/sql/ast"
 )
 
 func TestRenderSelectWithCTEAndUnion(t *testing.T) {

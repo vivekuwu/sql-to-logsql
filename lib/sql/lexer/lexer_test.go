@@ -3,7 +3,7 @@ package lexer
 import (
 	"testing"
 
-	"github.com/VictoriaMetrics-Community/sql-to-logsql/lib/sql/token"
+	"github.com/VictoriaMetrics/sql-to-logsql/lib/sql/token"
 )
 
 func TestNextTokenSelect(t *testing.T) {

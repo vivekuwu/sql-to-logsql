@@ -14,14 +14,14 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/VictoriaMetrics-Community/sql-to-logsql/cmd/sql-to-logsql/web"
-	"github.com/VictoriaMetrics-Community/sql-to-logsql/lib/logsql"
-	"github.com/VictoriaMetrics-Community/sql-to-logsql/lib/sql/lexer"
-	"github.com/VictoriaMetrics-Community/sql-to-logsql/lib/sql/parser"
-	"github.com/VictoriaMetrics-Community/sql-to-logsql/lib/store"
-	"github.com/VictoriaMetrics-Community/sql-to-logsql/lib/store/tablestore"
-	"github.com/VictoriaMetrics-Community/sql-to-logsql/lib/store/viewstore"
-	"github.com/VictoriaMetrics-Community/sql-to-logsql/lib/vlogs"
+	"github.com/VictoriaMetrics/sql-to-logsql/cmd/sql-to-logsql/web"
+	"github.com/VictoriaMetrics/sql-to-logsql/lib/logsql"
+	"github.com/VictoriaMetrics/sql-to-logsql/lib/sql/lexer"
+	"github.com/VictoriaMetrics/sql-to-logsql/lib/sql/parser"
+	"github.com/VictoriaMetrics/sql-to-logsql/lib/store"
+	"github.com/VictoriaMetrics/sql-to-logsql/lib/store/tablestore"
+	"github.com/VictoriaMetrics/sql-to-logsql/lib/store/viewstore"
+	"github.com/VictoriaMetrics/sql-to-logsql/lib/vlogs"
 )
 
 type Config struct {

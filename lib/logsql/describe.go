@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/VictoriaMetrics-Community/sql-to-logsql/lib/sql/ast"
-	"github.com/VictoriaMetrics-Community/sql-to-logsql/lib/store"
-	"github.com/VictoriaMetrics-Community/sql-to-logsql/lib/store/tablestore"
-	"github.com/VictoriaMetrics-Community/sql-to-logsql/lib/store/viewstore"
+	"github.com/VictoriaMetrics/sql-to-logsql/lib/sql/ast"
+	"github.com/VictoriaMetrics/sql-to-logsql/lib/store"
+	"github.com/VictoriaMetrics/sql-to-logsql/lib/store/tablestore"
+	"github.com/VictoriaMetrics/sql-to-logsql/lib/store/viewstore"
 )
 
 func GetDescribeStatementLogsQL(stmt *ast.DescribeStatement, sp *store.Provider) (string, error) {

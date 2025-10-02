@@ -1,5 +1,5 @@
-[![Latest Release](https://img.shields.io/github/v/release/VictoriaMetrics-Community/sql-to-logsql?sort=semver&label=&filter=!*-victorialogs&logo=github&labelColor=gray&color=gray&link=https%3A%2F%2Fgithub.com%2FVictoriaMetrics-Community%2Fsql-to-logsql%2Freleases%2Flatest)](https://github.com/VictoriaMetrics-Community/sql-to-logsql/releases)
-![License](https://img.shields.io/github/license/VictoriaMetrics-Community/sql-to-logsql?labelColor=green&label=&link=https%3A%2F%2Fgithub.com%2FVictoriaMetrics-Community%2Fsql-to-logsql%2Fblob%2Fmain%2FLICENSE)
+[![Latest Release](https://img.shields.io/github/v/release/VictoriaMetrics/sql-to-logsql?sort=semver&label=&filter=!*-victorialogs&logo=github&labelColor=gray&color=gray&link=https%3A%2F%2Fgithub.com%2FVictoriaMetrics%2Fsql-to-logsql%2Freleases%2Flatest)](https://github.com/VictoriaMetrics/sql-to-logsql/releases)
+![License](https://img.shields.io/github/license/VictoriaMetrics/sql-to-logsql?labelColor=green&label=&link=https%3A%2F%2Fgithub.com%2FVictoriaMetrics%2Fsql-to-logsql%2Fblob%2Fmain%2FLICENSE)
 ![Slack](https://img.shields.io/badge/Join-4A154B?logo=slack&link=https%3A%2F%2Fslack.victoriametrics.com)
 ![X](https://img.shields.io/twitter/follow/VictoriaMetrics?style=flat&label=Follow&color=black&logo=x&labelColor=black&link=https%3A%2F%2Fx.com%2FVictoriaMetrics)
 ![Reddit](https://img.shields.io/reddit/subreddit-subscribers/VictoriaMetrics?style=flat&label=Join&labelColor=red&logoColor=white&logo=reddit&link=https%3A%2F%2Fwww.reddit.com%2Fr%2FVictoriaMetrics)
@@ -36,7 +36,7 @@ It can optionally execute the resulting LogsQL against a VictoriaLogs instance, 
 
 ### Use binaries
 
-Just download the latest release from [Releases](https://github.com/VictoriaMetrics-Community/sql-to-logsql/releases) page and run it.
+Just download the latest release from [Releases](https://github.com/VictoriaMetrics/sql-to-logsql/releases) page and run it.
 
 ### Run Docker image
 
@@ -45,7 +45,7 @@ This is the easiest way to get started without needing to install Go or build fr
 
 ```bash
 docker run -d --name sql-to-logsql -p 8080:8080 -v /data/views \
-  ghcr.io/victoriametrics-community/sql-to-logsql
+  ghcr.io/victoriametrics/sql-to-logsql
 ```
 
 ### Run locally with Go

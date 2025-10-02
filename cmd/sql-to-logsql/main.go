@@ -11,7 +11,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/VictoriaMetrics-Community/sql-to-logsql/cmd/sql-to-logsql/api"
+	"github.com/VictoriaMetrics/sql-to-logsql/cmd/sql-to-logsql/api"
 )
 
 func main() {

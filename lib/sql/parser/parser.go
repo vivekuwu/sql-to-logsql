@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/VictoriaMetrics-Community/sql-to-logsql/lib/sql/ast"
-	"github.com/VictoriaMetrics-Community/sql-to-logsql/lib/sql/lexer"
-	"github.com/VictoriaMetrics-Community/sql-to-logsql/lib/sql/token"
+	"github.com/VictoriaMetrics/sql-to-logsql/lib/sql/ast"
+	"github.com/VictoriaMetrics/sql-to-logsql/lib/sql/lexer"
+	"github.com/VictoriaMetrics/sql-to-logsql/lib/sql/token"
 )
 
 const (

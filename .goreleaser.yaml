@@ -50,7 +50,7 @@ changelog:
 
 dockers_v2:
   - images:
-      - "ghcr.io/victoriametrics-community/sql-to-logsql"
+      - "ghcr.io/victoriametrics/sql-to-logsql"
     tags:
       - latest
       - "v{{ .Version }}"
