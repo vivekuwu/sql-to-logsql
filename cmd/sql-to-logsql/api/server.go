@@ -175,6 +175,7 @@ func (s *Server) handleQuery(w http.ResponseWriter, r *http.Request) {
 		} else {
 			writeJSON(w, http.StatusInternalServerError, queryResponse{Error: "query execution failed"})
 		}
+		return
 	}
 	resp.Data = string(data)
 	writeJSON(w, http.StatusOK, resp)
