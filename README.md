@@ -11,7 +11,7 @@ Web application that provides a simple proof-of-concept UI for querying [Victori
 It lets you write familiar SQL against your log data and instantly translates it to [VictoriaLogs LogsQL](https://docs.victoriametrics.com/victorialogs/logsql/) queries. 
 It can optionally execute the resulting LogsQL against a VictoriaLogs instance, manage reusable views that are stored on disk, and ships with a lightweight web UI for interactive use.
 
-![Web UI screenshot](screenshot.png)
+[![Web UI screenshot](screenshot.png)]((https://play-sql.victoriametrics.com)
 
 ## Highlights
 
@@ -22,6 +22,10 @@ It can optionally execute the resulting LogsQL against a VictoriaLogs instance, 
 - Persist and manage `.logsql` view definitions on the filesystem (with locking, `OR REPLACE`, and `IF NOT EXISTS` support).
 
 ## Quick start
+
+### Try without installation
+
+You can try the live demo on **[play-sql.victoriametrics.com](https://play-sql.victoriametrics.com)**
 
 ### Use binaries
 
