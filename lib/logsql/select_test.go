@@ -315,6 +315,16 @@ SELECT user FROM recent_errors WHERE service = 'api'`,
 			expected: "* | format \"<lc:user>\" as group_1 | stats by (group_1) count() total | rename group_1 as user_lower",
 		},
 		{
+			name:     "group by select alias",
+			sql:      "SELECT user AS usr, COUNT(*) AS total FROM logs GROUP BY usr",
+			expected: "* | stats by (user) count() total | rename user as usr",
+		},
+		{
+			name:     "group by function alias",
+			sql:      "SELECT LOWER(user) AS user_lower, COUNT(*) AS total FROM logs GROUP BY user_lower",
+			expected: "* | format \"<lc:user>\" as group_1 | stats by (group_1) count() total | rename group_1 as user_lower",
+		},
+		{
 			name: "join with subquery",
 			sql: `SELECT l.user, m.fail_count
 FROM logs AS l
