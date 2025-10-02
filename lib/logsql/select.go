@@ -963,6 +963,10 @@ func (v *selectTranslatorVisitor) buildStatsPipe(stmt *ast.SelectStatement) ([]s
 				return nil, false, err
 			}
 			if _, ok := groupLookup[field]; !ok {
+				alias := strings.TrimSpace(col.Alias)
+				if alias != "" {
+					field += fmt.Sprintf(" (with alias: %s)", formatFieldName(alias))
+				}
 				return nil, false, &TranslationError{
 					Code:    http.StatusBadRequest,
 					Message: fmt.Sprintf("translator: column %s must appear in GROUP BY", field),
@@ -992,6 +996,10 @@ func (v *selectTranslatorVisitor) buildStatsPipe(stmt *ast.SelectStatement) ([]s
 					if renderErr != nil {
 						rendered = fmt.Sprintf("%T", expr)
 					}
+					alias := strings.TrimSpace(col.Alias)
+					if alias != "" {
+						rendered += fmt.Sprintf(" (with alias: %s)", formatFieldName(alias))
+					}
 					return nil, false, &TranslationError{
 						Code:    http.StatusBadRequest,
 						Message: fmt.Sprintf("translator: non-aggregate function %s must appear in GROUP BY", rendered),
@@ -1006,6 +1014,10 @@ func (v *selectTranslatorVisitor) buildStatsPipe(stmt *ast.SelectStatement) ([]s
 					rendered, renderErr := render.Render(expr)
 					if renderErr != nil {
 						rendered = fmt.Sprintf("%T", expr)
+					}
+					alias := strings.TrimSpace(col.Alias)
+					if alias != "" {
+						rendered += fmt.Sprintf(" (with alias: %s)", formatFieldName(alias))
 					}
 					return nil, false, &TranslationError{
 						Code:    http.StatusBadRequest,
