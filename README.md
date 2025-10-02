@@ -1,5 +1,5 @@
 [![Latest Release](https://img.shields.io/github/v/release/VictoriaMetrics/sql-to-logsql?sort=semver&label=&filter=!*-victorialogs&logo=github&labelColor=gray&color=gray&link=https%3A%2F%2Fgithub.com%2FVictoriaMetrics%2Fsql-to-logsql%2Freleases%2Flatest)](https://github.com/VictoriaMetrics/sql-to-logsql/releases)
-![License](https://img.shields.io/github/license/VictoriaMetrics/sql-to-logsql?labelColor=green&label=&link=https%3A%2F%2Fgithub.com%2FVictoriaMetrics%2Fsql-to-logsql%2Fblob%2Fmain%2FLICENSE)
+![License](https://img.shields.io/github/license/VictoriaMetrics/sql-to-logsql?link=https%3A%2F%2Fgithub.com%2FVictoriaMetrics%2Fsql-to-logsql%2Fblob%2Fmain%2FLICENSE)
 ![Slack](https://img.shields.io/badge/Join-4A154B?logo=slack&link=https%3A%2F%2Fslack.victoriametrics.com)
 ![X](https://img.shields.io/twitter/follow/VictoriaMetrics?style=flat&label=Follow&color=black&logo=x&labelColor=black&link=https%3A%2F%2Fx.com%2FVictoriaMetrics)
 ![Reddit](https://img.shields.io/reddit/subreddit-subscribers/VictoriaMetrics?style=flat&label=Join&labelColor=red&logoColor=white&logo=reddit&link=https%3A%2F%2Fwww.reddit.com%2Fr%2FVictoriaMetrics)
@@ -20,17 +20,6 @@ It can optionally execute the resulting LogsQL against a VictoriaLogs instance, 
 - Simple [Web UI](#web-ui) featuring SQL editing, example gallery, and query results rendering.
 - Simple [REST API](#rest-api) (`/api/v1/sql-to-logsql`) that you can call from scripts, CI, or other services.
 - Persist and manage `.logsql` view definitions on the filesystem (with locking, `OR REPLACE`, and `IF NOT EXISTS` support).
-
-## Table of contents
-
-- [Quick start](#quick-start)
-- [Configuration](#configuration)
-- [SQL features and limits](#sql-features-and-limits)
-- [Working with views](#working-with-views)
-- [REST API](#rest-api)
-- [Web UI](#web-ui)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## Quick start
 
