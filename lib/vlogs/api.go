@@ -46,8 +46,14 @@ func (a *API) Execute(ctx context.Context, si *logsql.StatementInfo, customEC En
 	}
 	switch si.Kind {
 	case logsql.StatementTypeSelect:
+		if a.ec.Endpoint == "" && customEC.Endpoint == "" {
+			return nil, nil
+		}
 		return a.Query(ctx, si.LogsQL, recEC)
 	case logsql.StatementTypeDescribe:
+		if a.ec.Endpoint == "" && customEC.Endpoint == "" {
+			return nil, nil
+		}
 		return a.GetFieldNames(ctx, si.LogsQL, recEC)
 	case logsql.StatementTypeCreateView, logsql.StatementTypeDropView:
 		return []byte(si.Data), nil

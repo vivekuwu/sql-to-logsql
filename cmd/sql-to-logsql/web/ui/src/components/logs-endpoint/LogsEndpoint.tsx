@@ -34,7 +34,7 @@ export function LogsEndpoint({
       <CardHeader>
         <CardTitle>VictoriaLogs endpoint</CardTitle>
         {!endpointReadOnly && <CardDescription>You can query data from VictoriaLogs instance or just translate SQl to LogsQL without querying</CardDescription>}
-        <CardAction className={"flex flex-row gap-2"}>
+        {!endpointReadOnly && <CardAction className={"flex flex-row gap-2"}>
           <Switch
               checked={endpointEnabled}
               id={"endpointEnabled"}
@@ -46,7 +46,7 @@ export function LogsEndpoint({
           <Label htmlFor={"endpointEnabled"} className={"cursor-pointer"}>
               Query data from VictoriaLogs
           </Label>
-        </CardAction>
+        </CardAction>}
       </CardHeader>
       <CardContent className={"flex flex-row gap-2"}>
         <div className={"flex flex-col gap-1 w-3/4"}>

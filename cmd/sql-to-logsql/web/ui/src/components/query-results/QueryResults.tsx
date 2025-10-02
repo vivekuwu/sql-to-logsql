@@ -37,7 +37,7 @@ export function QueryResults({ query, data, isLoading, endpointEnabled }: QueryR
           </CardDescription>
         }
       </CardHeader>
-      {endpointEnabled &&
+      {!!data &&
         <CardContent>
           <QueryResultsTable data={data} />
         </CardContent>

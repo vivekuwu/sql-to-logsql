@@ -367,11 +367,8 @@ func TestHandleDescribeWithoutEndpoint(t *testing.T) {
 	rr := httptest.NewRecorder()
 	srv.ServeHTTP(rr, req)
 
-	if rr.Code != http.StatusBadRequest {
-		t.Fatalf("expected status 400, got %d", rr.Code)
-	}
-	if !strings.Contains(rr.Body.String(), "endpoint is required for this statement") {
-		t.Fatalf("unexpected error message: %s", rr.Body.String())
+	if rr.Code != http.StatusOK {
+		t.Fatalf("expected status 200, got %d", rr.Code)
 	}
 }
 
