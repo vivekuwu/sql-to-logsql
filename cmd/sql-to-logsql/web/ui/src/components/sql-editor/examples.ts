@@ -1,4 +1,4 @@
-export const DEFAULT_EXAMPLE_ID = "list_tables";
+export const DEFAULT_EXAMPLE_ID = "last_100";
 
 export const EXAMPLES = [
     {
