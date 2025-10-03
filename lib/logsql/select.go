@@ -904,11 +904,13 @@ func (v *selectTranslatorVisitor) buildStatsPipe(stmt *ast.SelectStatement) ([]s
 	groupFields := make([]string, 0)
 	groupLookup := make(map[string]struct{})
 	preGroupPipes := make([]string, 0)
+	aliasSources := v.collectGroupAliases(stmt.Columns)
 
 	if hasGroup {
 		v.groupExprAliases = make(map[string]string)
 		for i, expr := range stmt.GroupBy {
-			exprKey, err := render.Render(expr)
+			resolvedExpr := v.resolveGroupByAlias(expr, aliasSources)
+			exprKey, err := render.Render(resolvedExpr)
 			if err != nil {
 				return nil, false, &TranslationError{
 					Code:    http.StatusBadRequest,
@@ -921,7 +923,7 @@ func (v *selectTranslatorVisitor) buildStatsPipe(stmt *ast.SelectStatement) ([]s
 				groupLookup[existing] = struct{}{}
 				continue
 			}
-			fieldName, pipes, err := v.prepareGroupByField(expr, i)
+			fieldName, pipes, err := v.prepareGroupByField(resolvedExpr, i)
 			if err != nil {
 				return nil, false, err
 			}
@@ -961,6 +963,10 @@ func (v *selectTranslatorVisitor) buildStatsPipe(stmt *ast.SelectStatement) ([]s
 				return nil, false, err
 			}
 			if _, ok := groupLookup[field]; !ok {
+				alias := strings.TrimSpace(col.Alias)
+				if alias != "" {
+					field += fmt.Sprintf(" (with alias: %s)", formatFieldName(alias))
+				}
 				return nil, false, &TranslationError{
 					Code:    http.StatusBadRequest,
 					Message: fmt.Sprintf("translator: column %s must appear in GROUP BY", field),
@@ -990,6 +996,10 @@ func (v *selectTranslatorVisitor) buildStatsPipe(stmt *ast.SelectStatement) ([]s
 					if renderErr != nil {
 						rendered = fmt.Sprintf("%T", expr)
 					}
+					alias := strings.TrimSpace(col.Alias)
+					if alias != "" {
+						rendered += fmt.Sprintf(" (with alias: %s)", formatFieldName(alias))
+					}
 					return nil, false, &TranslationError{
 						Code:    http.StatusBadRequest,
 						Message: fmt.Sprintf("translator: non-aggregate function %s must appear in GROUP BY", rendered),
@@ -1004,6 +1014,10 @@ func (v *selectTranslatorVisitor) buildStatsPipe(stmt *ast.SelectStatement) ([]s
 					rendered, renderErr := render.Render(expr)
 					if renderErr != nil {
 						rendered = fmt.Sprintf("%T", expr)
+					}
+					alias := strings.TrimSpace(col.Alias)
+					if alias != "" {
+						rendered += fmt.Sprintf(" (with alias: %s)", formatFieldName(alias))
 					}
 					return nil, false, &TranslationError{
 						Code:    http.StatusBadRequest,
@@ -1093,6 +1107,60 @@ func (v *selectTranslatorVisitor) prepareGroupByField(expr ast.Expr, index int) 
 			Message: fmt.Sprintf("translator: unsupported GROUP BY expression %T", expr),
 		}
 	}
+}
+
+func (v *selectTranslatorVisitor) collectGroupAliases(columns []ast.SelectItem) map[string]ast.Expr {
+	if len(columns) == 0 {
+		return nil
+	}
+	aliases := make(map[string]ast.Expr)
+	for _, col := range columns {
+		alias := strings.TrimSpace(col.Alias)
+		if alias == "" {
+			continue
+		}
+		if _, ok := col.Expr.(*ast.StarExpr); ok {
+			continue
+		}
+		lower := strings.ToLower(alias)
+		if _, exists := aliases[lower]; !exists {
+			aliases[lower] = col.Expr
+		}
+		formatted := formatFieldName(alias)
+		formattedLower := strings.ToLower(formatted)
+		if _, exists := aliases[formattedLower]; !exists {
+			aliases[formattedLower] = col.Expr
+		}
+		if strings.HasPrefix(formatted, "\"") && strings.HasSuffix(formatted, "\"") && len(formatted) >= 2 {
+			unquoted := formatted[1 : len(formatted)-1]
+			unquotedLower := strings.ToLower(unquoted)
+			if _, exists := aliases[unquotedLower]; !exists {
+				aliases[unquotedLower] = col.Expr
+			}
+		}
+	}
+	if len(aliases) == 0 {
+		return nil
+	}
+	return aliases
+}
+
+func (v *selectTranslatorVisitor) resolveGroupByAlias(expr ast.Expr, aliases map[string]ast.Expr) ast.Expr {
+	if len(aliases) == 0 {
+		return expr
+	}
+	ident, ok := expr.(*ast.Identifier)
+	if !ok {
+		return expr
+	}
+	if len(ident.Parts) != 1 {
+		return expr
+	}
+	key := strings.ToLower(ident.Parts[0])
+	if replacement, ok := aliases[key]; ok {
+		return replacement
+	}
+	return expr
 }
 
 func (v *selectTranslatorVisitor) lookupGroupExpr(expr ast.Expr) (string, bool, error) {
