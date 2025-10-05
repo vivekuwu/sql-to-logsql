@@ -111,7 +111,8 @@ Supported highlights:
   - math (`ABS`, `CEIL`, `FLOOR`, `ROUND`, `LEAST`, `GREATEST`), 
   - and date helpers (`CURRENT_DATE`, `CURRENT_TIMESTAMP`).
 - `WHERE` with comparison operators, `BETWEEN`, `IN`, `LIKE`, `IS (NOT) NULL`
-- `ORDER BY`, `LIMIT`, `OFFSET`, `DISTINCT`, and `WITH` (CTEs, non-recursive).
+- `ORDER BY`, `LIMIT`, `OFFSET`, `DISTINCT`
+- Common Table Expressions (CTE) using `WITH` keyword
 - `GROUP BY`, `HAVING`, `COUNT/SUM/AVG/MIN/MAX`
 - Window functions (`OVER (PARTITION BY ... ORDER BY ...)`) for `SUM` and `COUNT`
 - `JOIN` (inner/left) on equality predicates, including subqueries.
