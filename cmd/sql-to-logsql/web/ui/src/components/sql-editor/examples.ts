@@ -89,6 +89,19 @@ WHERE container IS NOT NULL
 ORDER BY total DESC`,
     },
     {
+        id: "subqueries",
+        title: "Subqueries",
+        sql: `SELECT UPPER(container), total
+FROM (
+    SELECT kubernetes.container_name AS container, COUNT(*) AS total
+    FROM logs
+    GROUP BY kubernetes.container_name
+    LIMIT 20
+) container_stats
+WHERE container IS NOT NULL
+ORDER BY total DESC`,
+    },
+    {
         id: "window_functions",
         title: "Window (analytic) functions",
         sql: `SELECT 
