@@ -325,6 +325,30 @@ SELECT user FROM recent_errors WHERE service = 'api'`,
 			expected: "* | format \"<lc:user>\" as group_1 | stats by (group_1) count() total | rename group_1 as user_lower",
 		},
 		{
+			name: "subquery as base table",
+			sql: `SELECT *
+FROM (
+    SELECT *
+    FROM logs
+    WHERE level = 'error'
+) AS recent_errors`,
+			expected: "level:error",
+		},
+		{
+			name: "subquery as base with filter",
+			sql: `SELECT recent.user, recent.fail_count
+FROM (
+    SELECT user, COUNT(*) AS fail_count
+    FROM logs
+    WHERE level = 'error'
+    GROUP BY user
+) AS recent
+WHERE recent.fail_count > 10
+ORDER BY recent.fail_count DESC
+LIMIT 5`,
+			expected: "level:error | stats by (user) count() fail_count | filter fail_count:>10 | fields user, fail_count | sort by (fail_count desc) | limit 5",
+		},
+		{
 			name: "join with subquery",
 			sql: `SELECT l.user, m.fail_count
 FROM logs AS l
@@ -376,6 +400,21 @@ func TestToLogsQLWithConfig(t *testing.T) {
 		got := mustTranslateWithTables(t, "SELECT * FROM api WHERE level = 'warn'", tables)
 		if got != "(service:api AND level:warn)" {
 			t.Fatalf("unexpected query: %s", got)
+		}
+	})
+
+	t.Run("join with subquery base", func(t *testing.T) {
+		sql := `SELECT recent.user, a.level
+FROM (
+    SELECT user
+    FROM logs
+    WHERE level = 'error'
+) AS recent
+INNER JOIN api AS a ON recent.user = a.user`
+		got := mustTranslateWithTables(t, sql, tables)
+		expected := "level:error | fields user | join by (user) (service:api) inner | fields user, level"
+		if got != expected {
+			t.Fatalf("unexpected query:\nexpected: %s\n     got: %s", expected, got)
 		}
 	})
 

@@ -399,6 +399,11 @@ func (v *selectTranslatorVisitor) processFrom(from ast.TableExpr) ([]string, err
 			return nil, err
 		}
 		return nil, nil
+	case *ast.SubqueryTable:
+		if err := v.registerBaseSubquery(t); err != nil {
+			return nil, err
+		}
+		return nil, nil
 	case *ast.JoinExpr:
 		return v.processJoin(t)
 	default:
@@ -487,6 +492,46 @@ func (v *selectTranslatorVisitor) registerBaseTable(table *ast.TableName) error 
 	return nil
 }
 
+func (v *selectTranslatorVisitor) registerBaseSubquery(table *ast.SubqueryTable) error {
+	if table == nil || table.Select == nil {
+		return &TranslationError{
+			Code:    http.StatusBadRequest,
+			Message: "translator: invalid subquery reference",
+		}
+	}
+	alias := strings.TrimSpace(table.Alias)
+	if alias == "" {
+		return &TranslationError{
+			Code:    http.StatusBadRequest,
+			Message: "translator: subquery requires alias",
+		}
+	}
+	aliasLower := strings.ToLower(alias)
+	if v.baseAlias != "" && v.baseAlias != aliasLower {
+		return &TranslationError{
+			Code:    http.StatusBadRequest,
+			Message: "translator: multiple base tables are not supported",
+		}
+	}
+	subQuery, err := translateSelectStatementToLogsQLWithContext(table.Select, translationContext{
+		sp:   v.sp,
+		ctes: v.availableCTEs,
+	})
+	if err != nil {
+		return &TranslationError{
+			Code:    http.StatusBadRequest,
+			Message: fmt.Sprintf("translator: failed to translate subquery: %s", err),
+			Err:     err,
+		}
+	}
+	v.baseAlias = aliasLower
+	v.baseUsesPipeline = true
+	v.basePipeline = subQuery
+	v.baseFilter = ""
+	v.registerBinding(aliasLower, true)
+	return nil
+}
+
 func (v *selectTranslatorVisitor) registerBinding(alias string, isBase bool) {
 	key := strings.ToLower(alias)
 	if key == "" {
@@ -509,15 +554,20 @@ func (v *selectTranslatorVisitor) processJoin(join *ast.JoinExpr) ([]string, err
 		}
 	}
 
-	leftTable, ok := join.Left.(*ast.TableName)
-	if !ok {
+	switch left := join.Left.(type) {
+	case *ast.TableName:
+		if err := v.registerBaseTable(left); err != nil {
+			return nil, err
+		}
+	case *ast.SubqueryTable:
+		if err := v.registerBaseSubquery(left); err != nil {
+			return nil, err
+		}
+	default:
 		return nil, &TranslationError{
 			Code:    http.StatusBadRequest,
 			Message: "translator: JOIN left side must be table reference",
 		}
-	}
-	if err := v.registerBaseTable(leftTable); err != nil {
-		return nil, err
 	}
 
 	var rightAlias string
