@@ -112,7 +112,7 @@ Supported highlights:
   - and date helpers (`CURRENT_DATE`, `CURRENT_TIMESTAMP`).
 - `WHERE` with comparison operators, `BETWEEN`, `IN`, `LIKE`, `IS (NOT) NULL`
 - `ORDER BY`, `LIMIT`, `OFFSET`, `DISTINCT`
-- Common Table Expressions (CTE) using `WITH` keyword
+- Common Table Expressions (CTE) using `WITH` keyword and subqueries
 - `GROUP BY`, `HAVING`, `COUNT/SUM/AVG/MIN/MAX`
 - Window functions (`OVER (PARTITION BY ... ORDER BY ...)`) for `SUM` and `COUNT`
 - `JOIN` (inner/left) on equality predicates, including subqueries.

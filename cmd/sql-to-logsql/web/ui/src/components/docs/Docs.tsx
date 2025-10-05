@@ -54,7 +54,7 @@ export function Docs() {
              <p>
                <ul className={"list-disc pl-4 pt-2"}>
                  <li><code>SELECT, DISTINCT, AS, OVER, PARTITION BY</code></li>
-                 <li><code>FROM, WITH</code></li>
+                 <li><code>FROM, WITH, subqueries</code></li>
                  <li><code>WHERE, AND, OR</code></li>
                  <li><code>LEFT JOIN / JOIN / INNER JOIN</code></li>
                  <li><code>LIKE, NOT LIKE, BETWEEN, IN, NOT IN, IS NULL, IS NOT NULL</code></li>
