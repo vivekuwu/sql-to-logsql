@@ -34,7 +34,7 @@ LIMIT 100`,
     COUNT(*) AS messages_count
 FROM logs
 WHERE kubernetes.container_name IS NOT NULL
-GROUP BY kubernetes.container_name
+GROUP BY container
 HAVING messages_count > 10
 ORDER BY messages_count DESC`
     },
