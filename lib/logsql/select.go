@@ -51,6 +51,7 @@ type selectTranslatorVisitor struct {
 	sp *store.Provider
 
 	bindings           map[string]*tableBinding
+	autoAliasCounter   int
 	baseAlias          string
 	pendingLeftFilter  []ast.Expr
 	aggResults         map[string]string
@@ -172,6 +173,7 @@ func (v *selectTranslatorVisitor) translateSimpleSelect(stmt *ast.SelectStatemen
 	}
 
 	v.bindings = make(map[string]*tableBinding)
+	v.autoAliasCounter = 0
 	v.pendingLeftFilter = nil
 	v.aggResults = nil
 	v.baseAlias = ""
@@ -501,10 +503,7 @@ func (v *selectTranslatorVisitor) registerBaseSubquery(table *ast.SubqueryTable)
 	}
 	alias := strings.TrimSpace(table.Alias)
 	if alias == "" {
-		return &TranslationError{
-			Code:    http.StatusBadRequest,
-			Message: "translator: subquery requires alias",
-		}
+		alias = v.generateSubqueryAlias("base")
 	}
 	aliasLower := strings.ToLower(alias)
 	if v.baseAlias != "" && v.baseAlias != aliasLower {
@@ -538,6 +537,21 @@ func (v *selectTranslatorVisitor) registerBinding(alias string, isBase bool) {
 		return
 	}
 	v.bindings[key] = &tableBinding{alias: key, isBase: isBase}
+}
+
+func (v *selectTranslatorVisitor) generateSubqueryAlias(prefix string) string {
+	base := strings.TrimSpace(prefix)
+	if base == "" {
+		base = "subquery"
+	}
+	base = strings.ToLower(base)
+	for {
+		v.autoAliasCounter++
+		candidate := fmt.Sprintf("__%s_%d", base, v.autoAliasCounter)
+		if _, exists := v.bindings[candidate]; !exists {
+			return candidate
+		}
+	}
 }
 
 func (v *selectTranslatorVisitor) processJoin(join *ast.JoinExpr) ([]string, error) {
@@ -656,10 +670,7 @@ func (v *selectTranslatorVisitor) processJoin(join *ast.JoinExpr) ([]string, err
 	case *ast.SubqueryTable:
 		alias := strings.TrimSpace(rt.Alias)
 		if alias == "" {
-			return nil, &TranslationError{
-				Code:    http.StatusBadRequest,
-				Message: "translator: JOIN subquery requires alias",
-			}
+			alias = v.generateSubqueryAlias("join")
 		}
 		rightAlias = strings.ToLower(alias)
 		if _, exists := v.bindings[rightAlias]; exists {
@@ -766,8 +777,8 @@ func (v *selectTranslatorVisitor) extractJoinSpec(cond ast.JoinCondition, rightA
 
 			switch {
 			case leftIsIdent && rightIsIdent:
-				leftQual := v.qualifierForIdentifier(leftIdent)
-				rightQual := v.qualifierForIdentifier(rightIdent)
+				leftQual := v.qualifierForIdentifierWithDefault(leftIdent, v.baseAlias)
+				rightQual := v.qualifierForIdentifierWithDefault(rightIdent, rightAlias)
 				if leftQual == v.baseAlias && rightQual == rightAlias {
 					leftField, err := v.normalizeIdentifier(leftIdent)
 					if err != nil {
@@ -807,8 +818,8 @@ func (v *selectTranslatorVisitor) extractJoinSpec(cond ast.JoinCondition, rightA
 			}
 		}
 
-		leftAliases := v.aliasesForExpr(bin.Left)
-		rightAliases := v.aliasesForExpr(bin.Right)
+		leftAliases := v.aliasesForExprWithDefault(bin.Left, v.baseAlias)
+		rightAliases := v.aliasesForExprWithDefault(bin.Right, rightAlias)
 
 		if v.isAliasOnly(leftAliases, v.baseAlias) && len(rightAliases) == 0 {
 			leftFilters = append(leftFilters, expr)
@@ -857,21 +868,30 @@ func flattenAnd(expr ast.Expr) []ast.Expr {
 }
 
 func (v *selectTranslatorVisitor) qualifierForIdentifier(ident *ast.Identifier) string {
+	return v.qualifierForIdentifierWithDefault(ident, v.baseAlias)
+}
+
+func (v *selectTranslatorVisitor) qualifierForIdentifierWithDefault(ident *ast.Identifier, fallback string) string {
 	if ident == nil || len(ident.Parts) == 0 {
-		return v.baseAlias
+		return fallback
 	}
 	first := strings.ToLower(ident.Parts[0])
 	if _, ok := v.bindings[first]; ok {
 		return first
 	}
-	return v.baseAlias
+	return fallback
 }
 
 func (v *selectTranslatorVisitor) aliasesForExpr(expr ast.Expr) map[string]struct{} {
+	return v.aliasesForExprWithDefault(expr, v.baseAlias)
+}
+
+func (v *selectTranslatorVisitor) aliasesForExprWithDefault(expr ast.Expr, fallback string) map[string]struct{} {
 	aliases := make(map[string]struct{})
 	walkExpr(expr, func(e ast.Expr) {
 		if id, ok := e.(*ast.Identifier); ok {
-			aliases[v.qualifierForIdentifier(id)] = struct{}{}
+			alias := v.qualifierForIdentifierWithDefault(id, fallback)
+			aliases[alias] = struct{}{}
 		}
 	})
 	delete(aliases, "")
@@ -933,7 +953,13 @@ func (v *selectTranslatorVisitor) ensureBaseAliasesOnly(expr ast.Expr) error {
 }
 
 func (v *selectTranslatorVisitor) ensureAliases(expr ast.Expr, allowed map[string]struct{}) error {
-	aliases := v.aliasesForExpr(expr)
+	fallback := v.baseAlias
+	if len(allowed) == 1 {
+		for alias := range allowed {
+			fallback = alias
+		}
+	}
+	aliases := v.aliasesForExprWithDefault(expr, fallback)
 	for alias := range aliases {
 		if alias == "" {
 			continue

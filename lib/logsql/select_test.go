@@ -335,6 +335,16 @@ FROM (
 			expected: "level:error",
 		},
 		{
+			name: "subquery as base table without alias",
+			sql: `SELECT *
+FROM (
+    SELECT *
+    FROM logs
+    WHERE level = 'error'
+)`,
+			expected: "level:error",
+		},
+		{
 			name: "subquery as base with filter",
 			sql: `SELECT recent.user, recent.fail_count
 FROM (
@@ -345,6 +355,20 @@ FROM (
 ) AS recent
 WHERE recent.fail_count > 10
 ORDER BY recent.fail_count DESC
+LIMIT 5`,
+			expected: "level:error | stats by (user) count() fail_count | filter fail_count:>10 | fields user, fail_count | sort by (fail_count desc) | limit 5",
+		},
+		{
+			name: "subquery as base with filter without alias",
+			sql: `SELECT user, fail_count
+FROM (
+    SELECT user, COUNT(*) AS fail_count
+    FROM logs
+    WHERE level = 'error'
+    GROUP BY user
+)
+WHERE fail_count > 10
+ORDER BY fail_count DESC
 LIMIT 5`,
 			expected: "level:error | stats by (user) count() fail_count | filter fail_count:>10 | fields user, fail_count | sort by (fail_count desc) | limit 5",
 		},
@@ -360,6 +384,21 @@ INNER JOIN (
 ) AS m ON l.user = m.user
 WHERE l.level = 'error'
 ORDER BY m.fail_count DESC
+LIMIT 5`,
+			expected: "level:error | join by (user) (level:error | stats by (user) count() fail_count) inner | fields user, fail_count | sort by (fail_count desc) | limit 5",
+		},
+		{
+			name: "join with subquery without alias",
+			sql: `SELECT l.user, fail_count
+FROM logs AS l
+INNER JOIN (
+    SELECT user, COUNT(*) AS fail_count
+    FROM logs
+    WHERE level = 'error'
+    GROUP BY user
+) ON l.user = user
+WHERE l.level = 'error'
+ORDER BY fail_count DESC
 LIMIT 5`,
 			expected: "level:error | join by (user) (level:error | stats by (user) count() fail_count) inner | fields user, fail_count | sort by (fail_count desc) | limit 5",
 		},
