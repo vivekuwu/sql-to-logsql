@@ -867,10 +867,6 @@ func flattenAnd(expr ast.Expr) []ast.Expr {
 	return []ast.Expr{expr}
 }
 
-func (v *selectTranslatorVisitor) qualifierForIdentifier(ident *ast.Identifier) string {
-	return v.qualifierForIdentifierWithDefault(ident, v.baseAlias)
-}
-
 func (v *selectTranslatorVisitor) qualifierForIdentifierWithDefault(ident *ast.Identifier, fallback string) string {
 	if ident == nil || len(ident.Parts) == 0 {
 		return fallback
@@ -880,10 +876,6 @@ func (v *selectTranslatorVisitor) qualifierForIdentifierWithDefault(ident *ast.I
 		return first
 	}
 	return fallback
-}
-
-func (v *selectTranslatorVisitor) aliasesForExpr(expr ast.Expr) map[string]struct{} {
-	return v.aliasesForExprWithDefault(expr, v.baseAlias)
 }
 
 func (v *selectTranslatorVisitor) aliasesForExprWithDefault(expr ast.Expr, fallback string) map[string]struct{} {
