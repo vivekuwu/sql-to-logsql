@@ -87,7 +87,7 @@ export function Main() {
   return (
     <main className={"p-4 w-full flex flex-col gap-4"}>
       <div className={"w-full flex gap-4"}>
-        <div className={"w-full flex flex-col gap-4 max-w-[960px]"}>
+        <div className={"w-full flex flex-col gap-4  min-w-[20rem] max-w-[64rem]"}>
           <LogsEndpoint
             endpointUrl={endpointUrl}
             onUrlChange={setEndpointUrl}

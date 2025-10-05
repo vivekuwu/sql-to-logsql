@@ -3,19 +3,18 @@ import {
   Card,
   CardAction,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card.tsx";
-import { Badge } from "@/components/ui/badge.tsx";
 import {useCallback, useEffect, useState} from "react";
 import { Button } from "@/components/ui/button.tsx";
 import {Select, SelectContent, SelectItem, SelectTrigger} from "@/components/ui/select.tsx";
 import {SelectValue} from "@radix-ui/react-select";
 import {DEFAULT_EXAMPLE_ID, EXAMPLES} from "@/components/sql-editor/examples.ts";
 import {COMPLETIONS} from "@/components/sql-editor/complections.ts";
-import {CircleXIcon, CircleCheckBigIcon} from "lucide-react"
+import {CircleXIcon, CircleCheckBigIcon, PlayIcon} from "lucide-react"
+import {Spinner} from "@/components/ui/spinner.tsx";
 
 export interface SqlEditorProps {
   readonly onRun?: (sql: string) => void;
@@ -50,13 +49,9 @@ export function SQLEditor({
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>SQL code</CardTitle>
-        <CardDescription>
-          Virtual tables are configured on the server (default:
-          <Badge variant={"outline"}>logs</Badge>)
-        </CardDescription>
-        <CardAction className={"flex flex-row gap-2"}>
+      <CardHeader className={"max-sm:flex max-sm:flex-col max-sm:gap-4 max-sm:px-4"}>
+        <CardTitle className={"sm:py-3"}>SQL</CardTitle>
+        <CardAction className={"flex max-sm:flex-col gap-2"}>
           <Select onValueChange={setValue} value={value} disabled={isLoading}>
             <SelectTrigger className={"cursor-pointer"}>
               <SelectValue placeholder="Select example" />
@@ -74,6 +69,7 @@ export function SQLEditor({
             className={"cursor-pointer"}
             onClick={() => runQuery()}
           >
+            {isLoading ? <Spinner /> : <PlayIcon />}
             Execute
           </Button>
         </CardAction>
