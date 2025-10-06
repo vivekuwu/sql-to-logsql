@@ -202,6 +202,41 @@ func TestToLogsQLSuccess(t *testing.T) {
 			expected: "message:~\"^.foo$\"",
 		},
 		{
+			name:     "compare fields equality",
+			sql:      "SELECT * FROM logs WHERE user_id = customer_id",
+			expected: "user_id:eq_field(customer_id)",
+		},
+		{
+			name:     "compare fields inequality",
+			sql:      "SELECT * FROM logs WHERE duration != max_duration",
+			expected: "-duration:eq_field(max_duration)",
+		},
+		{
+			name:     "compare fields less than",
+			sql:      "SELECT * FROM logs WHERE duration < max_duration",
+			expected: "duration:lt_field(max_duration)",
+		},
+		{
+			name:     "compare fields less or equal",
+			sql:      "SELECT * FROM logs WHERE duration <= max_duration",
+			expected: "duration:le_field(max_duration)",
+		},
+		{
+			name:     "compare fields greater than",
+			sql:      "SELECT * FROM logs WHERE duration > max_duration",
+			expected: "-duration:le_field(max_duration)",
+		},
+		{
+			name:     "compare fields greater or equal",
+			sql:      "SELECT * FROM logs WHERE duration >= max_duration",
+			expected: "-duration:lt_field(max_duration)",
+		},
+		{
+			name:     "compare function fields equality",
+			sql:      "SELECT * FROM logs WHERE LOWER(user) = LOWER(customer)",
+			expected: "* | format \"<lc:user>\" as __filter_expr_1 | format \"<lc:customer>\" as __filter_expr_2 | filter __filter_expr_1:eq_field(__filter_expr_2) | delete __filter_expr_1, __filter_expr_2",
+		},
+		{
 			name:     "arithmetic projection",
 			sql:      "SELECT (duration_ms / 1000) AS duration_s FROM logs",
 			expected: "* | math (duration_ms / 1000) as duration_s | fields duration_s",

@@ -2479,11 +2479,39 @@ func (v *selectTranslatorVisitor) translateExpr(expr ast.Expr) (string, error) {
 }
 
 func (v *selectTranslatorVisitor) translateComparison(left, right ast.Expr, cmp comparisonKind) (string, error) {
-	field, lit, flipped, err := v.extractFieldAndLiteral(left, right)
+	leftField, leftIsField, err := v.fieldNameFromExpr(left)
+	if err != nil {
+		return "", err
+	}
+	rightField, rightIsField, err := v.fieldNameFromExpr(right)
 	if err != nil {
 		return "", err
 	}
 
+	switch {
+	case leftIsField && rightIsField:
+		return translateFieldComparison(leftField, rightField, cmp)
+	case leftIsField:
+		lit, err := literalFromExpr(right)
+		if err != nil {
+			return "", err
+		}
+		return buildFieldLiteralComparison(leftField, lit, false, cmp)
+	case rightIsField:
+		lit, err := literalFromExpr(left)
+		if err != nil {
+			return "", err
+		}
+		return buildFieldLiteralComparison(rightField, lit, true, cmp)
+	default:
+		return "", &TranslationError{
+			Code:    http.StatusBadRequest,
+			Message: "translator: comparison requires identifier and literal",
+		}
+	}
+}
+
+func buildFieldLiteralComparison(field string, lit literalValue, flipped bool, cmp comparisonKind) (string, error) {
 	switch cmp {
 	case comparisonEqual:
 		clause := field + ":" + lit.format()
@@ -2511,6 +2539,31 @@ func (v *selectTranslatorVisitor) translateComparison(left, right ast.Expr, cmp 
 		}
 		clause := field + ":" + op + lit.format()
 		return clause, nil
+	default:
+		return "", &TranslationError{
+			Code:    http.StatusBadRequest,
+			Message: "translator: unsupported comparison kind",
+		}
+	}
+}
+
+func translateFieldComparison(leftField, rightField string, cmp comparisonKind) (string, error) {
+	switch cmp {
+	case comparisonEqual:
+		return fmt.Sprintf("%s:eq_field(%s)", leftField, rightField), nil
+	case comparisonNotEqual:
+		clause := fmt.Sprintf("%s:eq_field(%s)", leftField, rightField)
+		return "-" + clause, nil
+	case comparisonLess:
+		return fmt.Sprintf("%s:lt_field(%s)", leftField, rightField), nil
+	case comparisonLessEqual:
+		return fmt.Sprintf("%s:le_field(%s)", leftField, rightField), nil
+	case comparisonGreater:
+		clause := fmt.Sprintf("%s:le_field(%s)", leftField, rightField)
+		return "-" + clause, nil
+	case comparisonGreaterEqual:
+		clause := fmt.Sprintf("%s:lt_field(%s)", leftField, rightField)
+		return "-" + clause, nil
 	default:
 		return "", &TranslationError{
 			Code:    http.StatusBadRequest,
@@ -2747,31 +2800,6 @@ func (v *selectTranslatorVisitor) rawFieldName(ident *ast.Identifier) (string, e
 		}
 	}
 	return field, nil
-}
-
-func (v *selectTranslatorVisitor) extractFieldAndLiteral(left, right ast.Expr) (string, literalValue, bool, error) {
-	if name, ok, err := v.fieldNameFromExpr(left); err != nil {
-		return "", literalValue{}, false, err
-	} else if ok {
-		lit, err := literalFromExpr(right)
-		if err != nil {
-			return "", literalValue{}, false, err
-		}
-		return name, lit, false, nil
-	}
-	if name, ok, err := v.fieldNameFromExpr(right); err != nil {
-		return "", literalValue{}, false, err
-	} else if ok {
-		lit, err := literalFromExpr(left)
-		if err != nil {
-			return "", literalValue{}, false, err
-		}
-		return name, lit, true, nil
-	}
-	return "", literalValue{}, false, &TranslationError{
-		Code:    http.StatusBadRequest,
-		Message: "translator: comparison requires identifier and literal",
-	}
 }
 
 func (v *selectTranslatorVisitor) fieldNameFromExpr(expr ast.Expr) (string, bool, error) {
