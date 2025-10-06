@@ -51,9 +51,9 @@ export function SQLEditor({
     <Card>
       <CardHeader className={"max-sm:flex max-sm:flex-col max-sm:gap-4 max-sm:px-4"}>
         <CardTitle className={"sm:py-3"}>SQL</CardTitle>
-        <CardAction className={"flex max-sm:flex-col gap-2"}>
+        <CardAction className={"flex max-sm:flex-col gap-2 w-full"}>
           <Select onValueChange={setValue} value={value} disabled={isLoading}>
-            <SelectTrigger className={"cursor-pointer"}>
+            <SelectTrigger className={"cursor-pointer max-sm:w-full"}>
               <SelectValue placeholder="Select example" />
             </SelectTrigger>
             <SelectContent>
@@ -66,7 +66,7 @@ export function SQLEditor({
           </Select>
           <Button
             disabled={isLoading}
-            className={"cursor-pointer"}
+            className={"cursor-pointer max-sm:w-full"}
             onClick={() => runQuery()}
           >
             {isLoading ? <Spinner /> : <PlayIcon />}
