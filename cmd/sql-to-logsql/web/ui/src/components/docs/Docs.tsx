@@ -3,21 +3,36 @@ import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/co
 import {InfoIcon, LinkIcon} from "lucide-react";
 import {Button} from "@/components/ui/button.tsx";
 import {Separator} from "@/components/ui/separator.tsx";
+import {Badge} from "@/components/ui/badge.tsx";
+import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip.tsx";
 
 export function Docs() {
   return (
    <Card className={"w-full min-w-[20rem] max-lg:hidden"}>
      <CardHeader>
-       <CardTitle>Information about SQL to LogsQL</CardTitle>
+       <CardTitle className={"flex flex-row gap-2 items-center"}>
+         <span>Information about SQL to LogsQL</span>
+         <Tooltip>
+           <TooltipTrigger className={"cursor-pointer"} asChild={true}>
+             <Badge variant={"outline"}>{__APP_VERSION__ == '${VERSION}' ? 'local' : __APP_VERSION__}</Badge>
+           </TooltipTrigger>
+           <TooltipContent>
+             <div>Version: {__APP_VERSION__ == '${VERSION}' ? 'local' : __APP_VERSION__}</div>
+             <div>Build date: {__BUILD_DATE__}</div>
+           </TooltipContent>
+         </Tooltip>
+       </CardTitle>
        <CardDescription>Service that helps to query VictoriaLogs with SQL</CardDescription>
      </CardHeader>
      <CardContent>
-       <a href={"https://github.com/VictoriaMetrics/sql-to-logsql"} target={"_blank"}>
+       <div className={"flex gap-2 items-center"}>
+         <a href={"https://github.com/VictoriaMetrics/sql-to-logsql"} target={"_blank"}>
            <Button variant={"link"} className={"cursor-pointer"}>
-               <LinkIcon />
-               Source code and documentation
+             <LinkIcon />
+             Source code and documentation
            </Button>
-       </a>
+         </a>
+       </div>
        <Separator className={"mt-2 ml-3"} />
        <Accordion
            type="single"

@@ -23,8 +23,27 @@ jobs:
         with:
           go-version: 1.25.1
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+
       - name: Check licenses and vulnerabilities
         run: make check
+
+      - name: Set version
+      - name: Update package.json version
+        run: |
+          if [[ "${{ github.ref_type }}" == "tag" ]]; then
+            TAG_VERSION=$(echo "${{ github.ref_name }}" | sed 's/^v//')
+          else
+            LATEST_TAG=$(git tag --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+(-.*)?$' | head -n 1)
+            [ -z "$LATEST_TAG" ] && { echo "No release tag found"; exit 1; }
+            TAG_VERSION=$(echo "$LATEST_TAG" | sed 's/^v//')
+            echo "Using latest tag: $LATEST_TAG"
+          fi
+          sed -i "s/\${VERSION}/$TAG_VERSION/g" server.json
+          echo "Version: $TAG_VERSION"
 
       - name: Run ui build
         run: make ui-build
