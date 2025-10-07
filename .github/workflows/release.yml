@@ -17,6 +17,9 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v5
+        with:
+          fetch-depth: '0'
+          fetch-tags: 'true'
 
       - name: Setup Go
         uses: actions/setup-go@v6
@@ -31,8 +34,15 @@ jobs:
       - name: Check licenses and vulnerabilities
         run: make check
 
-      - name: Set version
-      - name: Update package.json version
+      - name: Fetch tags
+        run: |
+          if [[ "${{ github.ref_type }}" != "tag" ]]; then
+            git fetch --tags
+          else
+            echo "Skipping tag fetch - already on tag ${{ github.ref_name }}"
+          fi
+
+      - name: Run ui build
         run: |
           if [[ "${{ github.ref_type }}" == "tag" ]]; then
             TAG_VERSION=$(echo "${{ github.ref_name }}" | sed 's/^v//')
@@ -42,11 +52,15 @@ jobs:
             TAG_VERSION=$(echo "$LATEST_TAG" | sed 's/^v//')
             echo "Using latest tag: $LATEST_TAG"
           fi
-          sed -i "s/\${VERSION}/$TAG_VERSION/g" server.json
+          cp cmd/sql-to-logsql/web/ui/package.json cmd/sql-to-logsql/web/ui/package.json.backup
+          cp cmd/sql-to-logsql/web/ui/package-lock.json cmd/sql-to-logsql/web/ui/package-lock.json.backup
+          sed -i "s/\${VERSION}/$TAG_VERSION/g" cmd/sql-to-logsql/web/ui/package.json
           echo "Version: $TAG_VERSION"
-
-      - name: Run ui build
-        run: make ui-build
+          make ui-build
+          cat cmd/sql-to-logsql/web/ui/package.json.backup > cmd/sql-to-logsql/web/ui/package.json
+          cat cmd/sql-to-logsql/web/ui/package-lock.json.backup > cmd/sql-to-logsql/web/ui/package-lock.json
+          rm cmd/sql-to-logsql/web/ui/package.json.backup
+          rm cmd/sql-to-logsql/web/ui/package-lock.json.backup
 
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v8

@@ -1,9 +1,9 @@
 version: 2
 project_name: sql-to-logsql
 
-before:
-  hooks:
-    - make ui-build
+#before:
+#  hooks:
+#    - make ui-build
 
 builds:
   - env:
@@ -17,8 +17,8 @@ builds:
       - arm64
       - arm
       - "386"
-    hooks:
-      pre: make ui-build
+#    hooks:
+#      pre: make ui-build
     main: ./cmd/sql-to-logsql/main.go
     binary: sql-to-logsql
     ldflags:
