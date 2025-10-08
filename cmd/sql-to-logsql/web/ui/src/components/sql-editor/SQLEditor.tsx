@@ -120,6 +120,7 @@ export function SQLEditor({
             const keybindings = [
               monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter,
               monaco.KeyMod.Shift | monaco.KeyCode.Enter,
+              monaco.KeyMod.WinCtrl | monaco.KeyCode.Enter,
               monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.Enter,
             ];
             keybindings.forEach((binding) => {
