@@ -41,6 +41,30 @@ docker run -d --name sql-to-logsql -p 8080:8080 -v /data/views \
   ghcr.io/victoriametrics/sql-to-logsql
 ```
 
+Here is the example with specified [config file](#configuration):
+
+```bash
+cat > config.json << EOL
+{
+  "listenAddr": ":8080",
+  "endpoint": "https://play-vmlogs.victoriametrics.com",
+  "bearerToken": "",
+  "tables": {
+    "logs": "*",
+    "errors": "* | log.level:ERROR",
+    "traces": "* | span_id:*"
+  },
+  "viewsDir": "/home/sql-to-logsql/data/views"
+}
+EOL
+
+docker run -d --name sql-to-logsql -p 8080:8080 \
+  -v /home/sql-to-logsql/data/views \
+  -v ./config.json:/home/sql-to-logsql/config.json:ro \
+  ghcr.io/victoriametrics/sql-to-logsql:v0.4.0 \
+  --config=config.json
+```
+
 ### Run locally with Go
 
 1. Install Go 1.25+, Node.js 18+ (Node 24 recommended, matching the Docker builder), and npm.
@@ -81,7 +105,7 @@ Example (`config.json`):
 ```json
 {
   "listenAddr": ":8080",
-  "endpoint": "https://victoria-logs.example.com",
+  "endpoint": "https://play-vmlogs.victoriametrics.com",
   "bearerToken": "<VM_BEARER_TOKEN>",
   "tables": {
     "logs": "*",
@@ -99,6 +123,8 @@ Example (`config.json`):
 | `bearerToken` | string            | Optional bearer token injected into VictoriaLogs requests when `endpoint` is set.                                       | empty             |
 | `tables`      | map[string]string | Mapping from SQL table name to LogsQL filter or pipeline fragment. Keys are case-insensitive.                           | `{ "logs": "*" }` |
 | `viewsDir`    | string            | Directory that stores `.logsql` files for views. Required for `CREATE VIEW`, `DROP VIEW`, and `SHOW VIEWS`.             | `./data/views`    |
+
+Please note that VictoriaLogs is called via the backend, so if you are using sql-to-logsql in Docker, localhost refers to the localhost of the container, not your computer.
 
 ## SQL features and limits
 
