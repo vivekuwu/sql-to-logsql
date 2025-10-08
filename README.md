@@ -38,7 +38,7 @@ This is the easiest way to get started without needing to install Go or build fr
 
 ```bash
 docker run -d --name sql-to-logsql -p 8080:8080 -v /data/views \
-  ghcr.io/victoriametrics/sql-to-logsql
+  ghcr.io/victoriametrics/sql-to-logsql:latest
 ```
 
 Here is the example with specified [config file](#configuration):
@@ -61,7 +61,7 @@ EOL
 docker run -d --name sql-to-logsql -p 8080:8080 \
   -v /home/sql-to-logsql/data/views \
   -v ./config.json:/home/sql-to-logsql/config.json:ro \
-  ghcr.io/victoriametrics/sql-to-logsql:v0.4.0 \
+  ghcr.io/victoriametrics/sql-to-logsql:latest \
   --config=config.json
 ```
 
