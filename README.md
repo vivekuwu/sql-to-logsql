@@ -135,6 +135,7 @@ Supported highlights:
   - arithmetic expressions, 
   - string helpers (`SUBSTR`, `CONCAT`, `TRIM`, `REPLACE`, `LOWER`, `UPPER`), 
   - math (`ABS`, `CEIL`, `FLOOR`, `ROUND`, `LEAST`, `GREATEST`), 
+  - JSON (`JSON_VALUE`),
   - and date helpers (`CURRENT_DATE`, `CURRENT_TIMESTAMP`).
 - `WHERE` with comparison operators, `BETWEEN`, `IN`, `LIKE`, `IS (NOT) NULL`
 - `ORDER BY`, `LIMIT`, `OFFSET`, `DISTINCT`

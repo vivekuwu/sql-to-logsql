@@ -282,6 +282,21 @@ func TestToLogsQLSuccess(t *testing.T) {
 			expected: "* | format \"<message>\" as updated | replace ('foo', 'bar') at updated | fields updated",
 		},
 		{
+			name:     "json value simple path with alias",
+			sql:      "SELECT JSON_VALUE(payload, '$.ip') AS ip FROM logs",
+			expected: "* | unpack_json from payload fields (ip) | fields ip",
+		},
+		{
+			name:     "json value nested path",
+			sql:      "SELECT JSON_VALUE(payload, '$.user.id') AS user_id FROM logs",
+			expected: "* | unpack_json from payload fields (user.id) | rename user.id as user_id | fields user_id",
+		},
+		{
+			name:     "json value nested path without alias",
+			sql:      "SELECT JSON_VALUE(payload, '$.user.id') FROM logs",
+			expected: "* | unpack_json from payload fields (user.id) | rename user.id as json_value_payload_user_id | fields json_value_payload_user_id",
+		},
+		{
 			name:     "window sum partition",
 			sql:      "SELECT SUM(duration_ms) OVER (PARTITION BY service ORDER BY _time) AS running_sum FROM logs",
 			expected: "* | sort by (_time) | running_stats by (service) sum(duration_ms) as running_sum | fields running_sum",
@@ -542,12 +557,75 @@ JOIN logs ON l.user = logs.user`,
 			name: "window distinct unsupported",
 			sql:  "SELECT SUM(DISTINCT duration_ms) OVER (ORDER BY _time) FROM logs",
 		},
+		{
+			name: "json value array unsupported",
+			sql:  "SELECT JSON_VALUE(payload, '$.items[0]') FROM logs",
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if _, err := translate(t, tt.sql); err == nil {
 				t.Fatalf("expected error for %q", tt.sql)
+			}
+		})
+	}
+}
+
+func TestJSONValueTranslationErrors(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name    string
+		sql     string
+		message string
+	}{
+		{
+			name:    "missing second argument",
+			sql:     "SELECT JSON_VALUE(payload) FROM logs",
+			message: "translator: JSON_VALUE expects two arguments",
+		},
+		{
+			name:    "non identifier first argument",
+			sql:     "SELECT JSON_VALUE('payload', '$.ip') FROM logs",
+			message: "translator: JSON_VALUE only supports identifiers as first argument",
+		},
+		{
+			name:    "non string literal path",
+			sql:     "SELECT JSON_VALUE(payload, 1) FROM logs",
+			message: "translator: JSON_VALUE path must be string literal",
+		},
+		{
+			name:    "invalid json path",
+			sql:     "SELECT JSON_VALUE(payload, 'user.id') FROM logs",
+			message: "translator: JSON path must start with $",
+		},
+		{
+			name:    "array not supported",
+			sql:     "SELECT JSON_VALUE(payload, '$.items[0]') FROM logs",
+			message: "translator: JSON_VALUE path with arrays is not supported",
+		},
+		{
+			name:    "unsupported characters in path segment",
+			sql:     "SELECT JSON_VALUE(payload, '$.user.name$') FROM logs",
+			message: `translator: JSON_VALUE path segment "name$" contains unsupported characters`,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			_, err := translate(t, tt.sql)
+			if err == nil {
+				t.Fatalf("expected error for %q", tt.sql)
+			}
+			var te *logsql.TranslationError
+			if !errors.As(err, &te) {
+				t.Fatalf("expected TranslationError, got %T", err)
+			}
+			if te.Message != tt.message {
+				t.Fatalf("unexpected error message: want %q, got %q", tt.message, te.Message)
 			}
 		})
 	}
