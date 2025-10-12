@@ -82,12 +82,12 @@ export function Docs() {
              <p>
                <ul className={"list-disc pl-4 pt-2"}>
                  <li><code>SUBSTR, CONCAT, LOWER, UPPER, TRIM, LTRIM, RTRIM, REPLACE</code></li>
-                 <li><code>LIKE, NOT LIKE</code></li>
-                 <li><code>BETWEEN</code></li>
+                 <li><code>LIKE, NOT LIKE, =, !=, &lt;, &gt;, &lt;=, &gt;=, BETWEEN</code></li>
                  <li><code>+,-, *, /, %, ^</code></li>
                  <li><code>ABS, GREATEST, LEAST, ROUND, FLOOR, CEIL, POW, LN, EXP</code></li>
                  <li><code>SUM, COUNT, MAX, MIN, AVG</code></li>
                  <li><code>CURRENT_TIMESTAMP, CURREN_DATE</code></li>
+                 <li><code>JSON_VALUE</code></li>
                </ul>
              </p>
            </AccordionContent>

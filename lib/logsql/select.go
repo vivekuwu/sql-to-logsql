@@ -1428,6 +1428,9 @@ func (v *selectTranslatorVisitor) translateStringFunction(fn *ast.FuncCall, alia
 	case "REPLACE":
 		pipes, aliasName, err := v.translateReplaceFunction(fn, alias)
 		return pipes, aliasName, true, err
+	case "JSON_VALUE":
+		pipes, aliasName, err := v.translateJSONValueFunction(fn, alias)
+		return pipes, aliasName, true, err
 	case "CURRENT_TIMESTAMP":
 		pipes, aliasName, err := v.translateCurrentTimestamp(alias)
 		return pipes, aliasName, true, err
@@ -1732,6 +1735,66 @@ func (v *selectTranslatorVisitor) translateReplaceFunction(fn *ast.FuncCall, ali
 	copyPipe := fmt.Sprintf("format \"%s\" as %s", escapeFormatPattern(pattern), aliasName)
 	replacePipe := fmt.Sprintf("replace ('%s', '%s') at %s", escapeSingleQuotes(searchVal), escapeSingleQuotes(replaceVal), aliasName)
 	return []string{copyPipe, replacePipe}, aliasName, nil
+}
+
+func (v *selectTranslatorVisitor) translateJSONValueFunction(fn *ast.FuncCall, alias string) ([]string, string, error) {
+	if len(fn.Args) != 2 {
+		return nil, "", &TranslationError{
+			Code:    http.StatusBadRequest,
+			Message: "translator: JSON_VALUE expects two arguments",
+		}
+	}
+	ident, ok := fn.Args[0].(*ast.Identifier)
+	if !ok {
+		return nil, "", &TranslationError{
+			Code:    http.StatusBadRequest,
+			Message: "translator: JSON_VALUE only supports identifiers as first argument",
+		}
+	}
+	rawField, err := v.rawFieldName(ident)
+	if err != nil {
+		return nil, "", err
+	}
+	pathLiteral, err := literalFromExpr(fn.Args[1])
+	if err != nil {
+		return nil, "", err
+	}
+	if pathLiteral.kind != literalString {
+		return nil, "", &TranslationError{
+			Code:    http.StatusBadRequest,
+			Message: "translator: JSON_VALUE path must be string literal",
+		}
+	}
+	jsonPath, err := parseJSONPath(pathLiteral.value)
+	if err != nil {
+		return nil, "", err
+	}
+	keys, ok := jsonPath.HasOnlyKeys()
+	if !ok || len(keys) == 0 {
+		return nil, "", &TranslationError{
+			Code:    http.StatusBadRequest,
+			Message: "translator: JSON_VALUE path with arrays is not supported",
+		}
+	}
+	for _, key := range keys {
+		if !safeFormatFieldLiteral.MatchString(key) {
+			return nil, "", &TranslationError{
+				Code:    http.StatusBadRequest,
+				Message: fmt.Sprintf("translator: JSON_VALUE path segment %q contains unsupported characters", key),
+			}
+		}
+	}
+	pathExpr := strings.Join(keys, ".")
+	aliasSource := rawField + "." + pathExpr
+	aliasName, err := makeProjectionAlias(strings.TrimSpace(alias), "json_value", aliasSource)
+	if err != nil {
+		return nil, "", err
+	}
+	pipes := []string{fmt.Sprintf("unpack_json from %s fields (%s)", rawField, pathExpr)}
+	if aliasName != pathExpr {
+		pipes = append(pipes, fmt.Sprintf("rename %s as %s", formatFieldName(pathExpr), formatFieldName(aliasName)))
+	}
+	return pipes, aliasName, nil
 }
 
 func (v *selectTranslatorVisitor) translateWindowFunction(fn *ast.FuncCall, alias string) ([]string, string, error) {
