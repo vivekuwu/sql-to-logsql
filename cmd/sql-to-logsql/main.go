@@ -36,6 +36,9 @@ func main() {
 	if len(cfg.Tables) == 0 {
 		cfg.Tables = map[string]string{"logs": "*"}
 	}
+	if (cfg.Limit) <= 0 {
+		cfg.Limit = 1000
+	}
 	srv, err := api.NewServer(cfg)
 	if err != nil {
 		log.Fatalf("failed to configure server: %v", err)

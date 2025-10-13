@@ -13,14 +13,16 @@ import {Select, SelectContent, SelectItem, SelectTrigger} from "@/components/ui/
 import {SelectValue} from "@radix-ui/react-select";
 import {DEFAULT_EXAMPLE_ID, EXAMPLES} from "@/components/sql-editor/examples.ts";
 import {COMPLETIONS} from "@/components/sql-editor/complections.ts";
-import {CircleXIcon, CircleCheckBigIcon, PlayIcon} from "lucide-react"
+import {CircleXIcon, CircleCheckBigIcon, PlayIcon, ListFilterIcon} from "lucide-react"
 import {Spinner} from "@/components/ui/spinner.tsx";
+import {Badge} from "@/components/ui/badge.tsx";
 
 export interface SqlEditorProps {
   readonly onRun?: (sql: string) => void;
   readonly isLoading?: boolean;
   readonly error?: string;
   readonly success?: string;
+  readonly limit?: number
 }
 
 export function SQLEditor({
@@ -28,6 +30,7 @@ export function SQLEditor({
   isLoading,
   error,
   success,
+  limit,
 }: SqlEditorProps) {
   const [value, setValue] = useState<string>(DEFAULT_EXAMPLE_ID);
   const [sql, setSql] = useState("");
@@ -140,6 +143,14 @@ export function SQLEditor({
             <CircleCheckBigIcon color={"green"} />
             <span className={"text-green-700"}>{success}</span>
           </CardFooter>
+      )}
+      {!error && !success && limit && limit > 0 && (
+        <CardFooter className={"flex gap-1"}>
+          <ListFilterIcon />
+          <span>
+            Any query will be limited to <Badge variant={"secondary"} className={"font-semibold"}>{limit}</Badge> rows.
+          </span>
+        </CardFooter>
       )}
     </Card>
   );

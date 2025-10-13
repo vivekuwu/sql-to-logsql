@@ -20,12 +20,14 @@ type EndpointConfig struct {
 
 type API struct {
 	ec     EndpointConfig
+	limit  uint32
 	client *http.Client
 }
 
-func NewVLogsAPI(ec EndpointConfig) *API {
+func NewVLogsAPI(ec EndpointConfig, limit uint32) *API {
 	return &API{
-		ec: ec,
+		ec:    ec,
+		limit: limit,
 		client: &http.Client{
 			Timeout: 60 * time.Second,
 		},
@@ -89,6 +91,7 @@ func (a *API) Query(ctx context.Context, logsQL string, recEC EndpointConfig) ([
 	reqURL = reqURL.JoinPath("/select/logsql/query")
 	form := url.Values{}
 	form.Set("query", logsQL)
+	form.Set("limit", fmt.Sprintf("%d", a.limit))
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, reqURL.String(), strings.NewReader(form.Encode()))
 	if err != nil {
 		return nil, &APIError{
