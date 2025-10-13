@@ -112,7 +112,8 @@ Example (`config.json`):
     "errors": "* | level:ERROR",
     "traces": "* | span_id:*"
   },
-  "viewsDir": "./data/views"
+  "viewsDir": "./data/views",
+  "limit": 1000
 }
 ```
 
@@ -123,6 +124,7 @@ Example (`config.json`):
 | `bearerToken` | string            | Optional bearer token injected into VictoriaLogs requests when `endpoint` is set.                                       | empty             |
 | `tables`      | map[string]string | Mapping from SQL table name to LogsQL filter or pipeline fragment. Keys are case-insensitive.                           | `{ "logs": "*" }` |
 | `viewsDir`    | string            | Directory that stores `.logsql` files for views. Required for `CREATE VIEW`, `DROP VIEW`, and `SHOW VIEWS`.             | `./data/views`    |
+| `limit`       | int               | Maximum number of rows returned by any query.                                                                           | 1000              |
 
 Please note that VictoriaLogs is called via the backend, so if you are using sql-to-logsql in Docker, localhost refers to the localhost of the container, not your computer.
 
@@ -195,12 +197,15 @@ Successful response:
 Errors emit `HTTP 4xx/5xx` with `{ "error": "..." }`. 
 Parser, translator, VictoriaLogs client, and view-store errors map to informative messages (`400`, `409`, `423`, `502`, etc.).
 
-### `GET /api/v1/endpoint`
+### `GET /api/v1/config`
 
-Returns the compile-time endpoint configured on the server (used by the UI to decide whether the endpoint fields should be read-only):
+Returns the endpoint and max rows limit configured on the server (used by the UI to decide whether the endpoint fields should be read-only):
 
 ```json
-{ "endpoint": "https://victoria-logs.example.com" }
+{ 
+  "endpoint": "https://victoria-logs.example.com", 
+  "limit": 1000 
+}
 ```
 
 ### `GET /healthz`

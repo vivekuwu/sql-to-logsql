@@ -27,16 +27,18 @@ export function Main() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState<string>("");
+  const [limit, setLimit] = useState<number>(0);
 
   useEffect(() => {
     setLoading(true);
-    fetch(`/api/v1/endpoint`).then(resp => resp.json()).then(data => {
+    fetch(`/api/v1/config`).then(resp => resp.json()).then(data => {
       if (data.endpoint) {
         setEndpointUrl(data.endpoint);
         setBearerToken("secret");
         setEndpointReadOnly(true);
         setEndpointEnabled(false);
       }
+      setLimit(data.limit || 0);
       setLoading(false);
     })
   }, [])
@@ -103,6 +105,7 @@ export function Main() {
             isLoading={loading}
             error={error}
             success={success}
+            limit={limit}
           />
         </div>
         <Docs />

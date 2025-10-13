@@ -30,6 +30,7 @@ type Config struct {
 	BearerToken string            `json:"bearerToken"`
 	Tables      map[string]string `json:"tables"`
 	ViewsDir    string            `json:"viewsDir"`
+	Limit       uint32            `json:"limit"`
 }
 
 type Server struct {
@@ -62,20 +63,23 @@ func NewServer(cfg Config) (*Server, error) {
 	srv := &Server{
 		mux: http.NewServeMux(),
 		sp:  sp,
-		api: vlogs.NewVLogsAPI(vlogs.EndpointConfig{
-			Endpoint:    serverCfg.Endpoint,
-			BearerToken: serverCfg.BearerToken,
-		}),
+		api: vlogs.NewVLogsAPI(
+			vlogs.EndpointConfig{
+				Endpoint:    serverCfg.Endpoint,
+				BearerToken: serverCfg.BearerToken,
+			},
+			serverCfg.Limit,
+		),
 	}
 	srv.mux.HandleFunc("/healthz", withSecurityHeaders(srv.handleHealth))
 	srv.mux.HandleFunc("/api/v1/sql-to-logsql", withSecurityHeaders(srv.handleQuery))
-	srv.mux.HandleFunc("/api/v1/endpoint", withSecurityHeaders(func(w http.ResponseWriter, r *http.Request) {
+	srv.mux.HandleFunc("/api/v1/config", withSecurityHeaders(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
 			w.Header().Set("Allow", http.MethodGet)
 			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 			return
 		}
-		writeJSON(w, http.StatusOK, map[string]string{"endpoint": serverCfg.Endpoint})
+		writeJSON(w, http.StatusOK, map[string]any{"endpoint": serverCfg.Endpoint, "limit": serverCfg.Limit})
 	}))
 	srv.mux.HandleFunc("/", withSecurityHeaders(srv.handleStatic))
 	return srv, nil
